@@ -32,7 +32,7 @@ from joblib import Parallel, delayed
 import numexpr as ne
 import time
 
-import extensions as ext
+import pycatch.utils.extensions as ext
 
 #--------------------------------------------------------------------------------------------------
 # find minimum intensity around seed to speed up calculation of curves

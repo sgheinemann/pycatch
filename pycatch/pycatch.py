@@ -10,33 +10,25 @@ import numpy as np
 import pathlib
 import copy
 
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import matplotlib.colors as mcolor
-
-
 import astropy.units as u
-from astropy.coordinates import SkyCoord
 
 import sunpy
 import sunpy.map
 import sunpy.util.net
 from sunpy.net import Fido, attrs as a
-from sunpy.coordinates import frames
 
-import utils.calibration as cal
-import utils.extensions as ext
-import utils.plot as poptions
-import utils.ch_mapping as mapping
+import pycatch.utils.calibration as cal
+import pycatch.utils.extensions as ext
+import pycatch.utils.plot as poptions
+import pycatch.utils.ch_mapping as mapping
 
 class pycatch:
     
     def __init__(self, **kwargs):
         
-        self.dir                = kwargs['dir'] if 'magnetogram_file' in kwargs else pathlib.Path.home()
-        self.save_dir           = kwargs['save_dir'] if 'magnetogram_file' in kwargs else pathlib.Path.home()
-        self.map_file           = kwargs['map_file'] if 'magnetogram_file' in kwargs else None
+        self.dir                = kwargs['dir'] if 'dir' in kwargs else str(pathlib.Path.home())
+        self.save_dir           = kwargs['save_dir'] if 'save_dir' in kwargs else pathlib.Path.home()
+        self.map_file           = kwargs['map_file'] if 'map_file' in kwargs else None
         self.magnetogram_file   = kwargs['magnetogram_file'] if 'magnetogram_file' in kwargs else None
         
         self.map                = None
@@ -53,52 +45,65 @@ class pycatch:
         self.properties         = {}
         
     # Download data using sunpy FIDO
-    def download(self, time, email = 'test@gmail.com',instr='AIA', wave=193,jsoc =True, **kwargs): #Fido.search **kwargs
+    def download(self, time,instr='AIA', wave=193,jsoc =True, **kwargs): #Fido.search **kwargs
         
         t=sunpy.time.parse_time(time)
-        if instr == 'AIA' and jsoc:
-            if email == 'test@gmail.com':
-                print('> pycatch ## WARNING ##')
-                print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
-                return
-            else:
-                res = Fido.search(a.Time(t-10*u.min,t+10*u.min),a.jsoc.Series('aia.lev1_euv_12s'),a.Wavelength(wave*u.angstrom),a.jsoc.Notify(email), **kwargs)
-                tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
-                indx=(np.abs(tv-t)).argmin()
-                downloaded_files = Fido.fetch(res[:,indx], path=self.dir+'/{instrument}/{file}') 
-                self.map_file = downloaded_files[0]
-                self.type = 'SDO' 
+        # jsoc not working !!
+        # email = 'test@gmail.com',
+        # if instr == 'AIA' and jsoc:
+        #     if email == 'test@gmail.com':
+        #         print('> pycatch ## WARNING ##')
+        #         print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
+        #         return
+        #     else:
+        #         res = Fido.search(a.Time(t-10*u.min,t+10*u.min),a.jsoc.Series('aia.lev1_euv_12s'),a.Wavelength(wave*u.angstrom),a.jsoc.Notify(email), **kwargs)
+        #         tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
+        #         indx=(np.abs(tv-t)).argmin()
+        #         downloaded_files = Fido.fetch(res[:,indx], path=self.dir + '/{instrument}/{file}') 
+        #         self.map_file = downloaded_files[0]
+        #         self.type = 'SDO' 
 
+        # else:
+        res = Fido.search(a.Time(t-10*u.min,t+10*u.min, near=t),a.Instrument(instr),a.Wavelength(wave*u.angstrom), **kwargs)
+        downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}' ) 
+        self.map_file = downloaded_files[0]
+        
+        if instr == 'AIA':
+            self.type = 'SDO' 
+        elif instr == 'SECCHI':
+            self.type = 'STEREO'
+        elif instr == 'EUVI':
+            self.type = 'SOHO'
         else:
-            res = Fido.search(a.Time(t-10*u.min,t+10*u.min, near=t),a.Instrument(instr),a.Wavelength(wave*u.angstrom), **kwargs)
-            downloaded_files = Fido.fetch(res, path=self.dir) 
-            self.map_file = downloaded_files[0]
-            
-            if instr == 'AIA':
-                self.type = 'SDO' 
-            elif instr == 'SECCHI':
-                self.type = 'STEREO'
-            elif instr == 'EUVI':
-                self.type = 'SOHO'
-            else:
-                pass
+            pass
         
         return 
     
     
-    def download_magnetogram(self,email, cadence=720, **kwargs): #Fido.search **kwargs
+    def download_magnetogram(self, cadence=45, **kwargs): #Fido.search **kwargs
         if self.type == 'SDO' and self.map is not None:
             t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
-            if email == 'test@gmail.com':
-                print('> pycatch ## WARNING ##')
-                print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
-                return
-            else:
-                res = Fido.search(a.Time(t-30*u.min,t+30*u.min, near=t),a.jsoc.Series(f'hmi.m_{cadence}s'), **kwargs)
-                tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
-                indx=(np.abs(tv-t)).argmin()
-                downloaded_files = Fido.fetch(res[:,indx], path=self.dir+'/{instrument}/{file}') 
+             
+             
+            # jsoc not working !!
+            # if email == 'test@gmail.com':
+            #     print('> pycatch ## WARNING ##')
+            #     print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
+            #     return
+            # else:
+            #     res = Fido.search(a.Time(t-30*u.min,t+30*u.min, near=t),a.jsoc.Series(f'hmi.m_{cadence}s'), **kwargs)
+            #     tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
+            #     indx=(np.abs(tv-t)).argmin()
+            #     downloaded_files = Fido.fetch(res[:,indx], path=self.dir + '/{instrument}/{file}') 
+            #     self.magnetogram_file = downloaded_files[0]
+            print('> pycatch ## WARNING ##')
+            print('> pycatch ## Download of HMI 45s magnetograms only ##')            
+            print('> pycatch ## Manually download 720s magnetograms from JSOC ##')   
+            if cadence == 45:
+                res = Fido.search(a.Time(t-10*u.min,t+10*u.min, near=t),a.Instrument('HMI'),a.Physobs("LOS_magnetic_field"), **kwargs)
+                downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}') 
                 self.magnetogram_file = downloaded_files[0]
+            
         elif self.type == 'SOHO' and self.map is not None:
             print('> pycatch ## DOWNLOAD OF SOHO MAGNETOGRAMS NOT YET IMPLEMENTED ##')
         else:
