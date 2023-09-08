@@ -131,3 +131,25 @@ def annulus_limb_correction(map):
         data[ind] = corr
         
     return sunpy.map.Map((data,map.meta))
+
+#--------------------------------------------------------------------------------------------------
+#prep hmi image
+def calibrate_hmi(map,intensity_map, rotate= True, align = True, cut_limb = True):
+    calmap=copy.deepcopy(map)
+    
+    #rotate north up
+    if rotate:
+        calmap = calmap.rotate(order=3)
+    
+    #align with aia map
+    if align:
+        calmap= calmap.reproject_to(intensity_map.wcs)
+        
+    #cut limb
+    if cut_limb:
+        hpc_coords=all_coordinates_from_map(calmap)
+        mask=coordinate_is_on_solar_disk(hpc_coords)
+        data=np.where(mask == True, calmap.data, np.nan)
+        calmap=sunpy.map.Map((data,calmap.meta))
+        
+    return calmap

@@ -1,5 +1,0 @@
-numpy
-sunpy
-astropy
-opencv-python
-matplotlib
