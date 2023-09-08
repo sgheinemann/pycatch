@@ -46,7 +46,7 @@ class pycatch:
         
     # Download data using sunpy FIDO
     def download(self, time,instr='AIA', wave=193,jsoc =True, **kwargs): #Fido.search **kwargs
-        
+        ''' Download function for EUV data '''
         t=sunpy.time.parse_time(time)
         # jsoc not working !!
         # email = 'test@gmail.com',
