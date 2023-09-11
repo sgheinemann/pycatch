@@ -11,8 +11,7 @@ import pathlib
 
 
 
-
-VERSION = '0.0.1' 
+exec(open('pycatch/_version.py').read())
 DESCRIPTION = 'Collection of Analysis Tools for Coronal Holes'
 here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
@@ -23,7 +22,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 setup(
        # the name must match the folder name 'verysimplemodule'
         name="pycatch", 
-        version=VERSION,
+        version=__version__,
         author="Stephan G. Heinemann",
         author_email="stephan.heinemann@hmail.at",
         description=DESCRIPTION,

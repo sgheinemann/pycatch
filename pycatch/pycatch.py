@@ -9,6 +9,7 @@ import os,sys
 import numpy as np
 import pathlib
 import copy
+import pickle
 
 import astropy.units as u
 
@@ -21,11 +22,30 @@ import pycatch.utils.calibration as cal
 import pycatch.utils.extensions as ext
 import pycatch.utils.plot as poptions
 import pycatch.utils.ch_mapping as mapping
+import pycatch as catch
+import pycatch
+from pycatch._version import __version__
 
 class pycatch:
+    __version__ = __version__
     
-    def __init__(self, **kwargs):
-        
+    def __init__(self, load=None, **kwargs):
+        """
+        Initialize pycatch object.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            dir: directory for storing and loading data (Default is the home directory)
+            save_dir: directory for storing data (Default is the home directory)
+            map_file: filepath to EUV/Intensity map, needs to be loadable with sunpy.map.map() (Default: None)
+            magnetogram_file: filepath to magnetogram, needs to be loadable with sunpy.map.map() (Default: None)
+            load: loads previously saved pycatch object from path, overrides any other keywords (Default: None)
+        Returns 
+        -------
+        None
+
+        """
         self.dir                = kwargs['dir'] if 'dir' in kwargs else str(pathlib.Path.home())
         self.save_dir           = kwargs['save_dir'] if 'save_dir' in kwargs else pathlib.Path.home()
         self.map_file           = kwargs['map_file'] if 'map_file' in kwargs else None
@@ -41,12 +61,95 @@ class pycatch:
         self.rebin_status       = None
         self.cutout_status      = None
         self.kernel             = None
-        self.binmaps            = None
-        self.properties         = {}
+        self.binmap            = None
+        self.properties         =  {'A':None,'dA':None,'Imean':None,'dImean':None,'Imed':None,'dImed':None,'CoM':None,'dCoM':None,'ex':None,'dex':None}
+        self.properties
+        
+        if load is not None:
+            
+            try:
+                with open(load, "rb") as f:
+                    data=pickle.load(f)
+                
+               # save_dict=
+                for key,value in data.items():
+                    setattr(self,key, value)
+                
+                print('> pycatch ## OBJECT SUCESSFULLY LOADED  ##')
+                
+            except Exception as ex:
+                print("> pycatch ## Error during unpickling object (Possibly unsupported):", ex)
+                print("> pycatch ## NO DATA LOADAD ##")
+                return
+ 
+        
+    # save pycatch in pickle file
+    def save(self, file=None, overwrite = False, no_original=True):
+        """
+        Save pycatch object in a pickle file.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            file: filepath to save, default is pycatch.dir (Default: False)
+            overwrite: overwrites file (Default: False)
+            no_original: does not save the original map to save disk space (Default: True)
+        Returns 
+        -------
+        None
+
+        """
+        if self.map is None:
+            print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
+            print('> pycatch ## OBJECT NOT SAVED ##')
+            return
+        try:
+            if no_original:
+                dummy=copy.deepcopy(self.original_map)
+                self.original_map=None
+            if file is not None:
+                fpath = file
+            else:
+                datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+                typestr=self.map.meta['telescop'].replace('/','_')
+                nr=0
+                fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
+                if not overwrite:
+                    while os.path.isfile(fpath):
+                        nr+=1
+                        fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
+
+                save_dict={}
+                for key,value in self.__dict__.items():
+                    save_dict.update({key:value}) 
+                    
+            with open(fpath, "wb") as f:
+                pickle.dump(save_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
+            print(f'> pycatch ## OBJECT SAVED: {fpath}  ##')
+            
+            if no_original:
+                self.original_map=dummy
+                
+        except Exception as ex:
+            print("> pycatch ## Error during pickling object (Possibly unsupported):", ex)
+        return
         
     # Download data using sunpy FIDO
-    def download(self, time,instr='AIA', wave=193,jsoc =True, **kwargs): #Fido.search **kwargs
-        ''' Download function for EUV data '''
+    def download(self, time,instr='AIA', wave=193, **kwargs): #Fido.search **kwargs
+        """
+        Download EUV map using VSO.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            wave: set instrument (Default: 'AIA')
+            wave: set wavelength of EUV image (Default: 193)
+            takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
+        Returns 
+        -------
+        None
+
+        """
         t=sunpy.time.parse_time(time)
         # jsoc not working !!
         # email = 'test@gmail.com',
@@ -68,20 +171,25 @@ class pycatch:
         downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}' ) 
         self.map_file = downloaded_files[0]
         
-        if instr == 'AIA':
-            self.type = 'SDO' 
-        elif instr == 'SECCHI':
-            self.type = 'STEREO'
-        elif instr == 'EUVI':
-            self.type = 'SOHO'
-        else:
-            pass
-        
         return 
     
     
     def download_magnetogram(self, cadence=45, **kwargs): #Fido.search **kwargs
-        if self.type == 'SDO' and self.map is not None:
+        """
+        Download magnetogram matching the EUV date using VSO.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            cadence: download LOS magnetogram with _<cadence>s (Default: 45)
+            takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
+        Returns 
+        -------
+        None
+
+        """
+        
+        if 'SDO' in self.type and self.map is not None:
             t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
              
              
@@ -104,7 +212,7 @@ class pycatch:
                 downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}') 
                 self.magnetogram_file = downloaded_files[0]
             
-        elif self.type == 'SOHO' and self.map is not None:
+        elif 'SOHO' in self.type and self.map is not None:
             print('> pycatch ## DOWNLOAD OF SOHO MAGNETOGRAMS NOT YET IMPLEMENTED ##')
         else:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
@@ -113,25 +221,72 @@ class pycatch:
         
     
     # Load data using sunpy FIDO
-    def load(self, mag=False):
+    def load(self, mag=False, file = None):
+        """
+        Load maps.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            mag: load magnetogram (Default: False)
+            file: filepath to load, if not set loads pycatch.map_file or pycatch.magnetogram_file (Default: False)
+        Returns 
+        -------
+        None
+
+        """
         if mag:
+            if file is not None:
+                self.magnetogram_file = file
             self.magnetogram=sunpy.map.Map(self.magnetogram_file)
         else:
+            if file is not None:
+                self.map_file = file
             self.map=sunpy.map.Map(self.map_file)
             self.original_map = copy.deepcopy(self.map)
+            self.type=self.map.meta['telescop']
         return
         
         
     # calibrate EUV data
     def calibration(self,**kwargs):
+        """
+        Calibrate the intensity image.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            SDO/AIA:
+            deconvolve: use PSF deconvolution (Default: False, takes custom PSF as input, Default: standard AIA-PSF)   
+            register: co-registering the map (Default: True)
+            normalize: Normalize intensity to 1s (Default: True)
+            degradation: correct instrument degredation (Default: True)
+            alc: Annulus Limb Correction, Python implementation from Verbeek et al. (2014): (Default: True)
+            cut_limb: Set off-limb pixel to nan (Default: True)
+            
+            STEREO/SECCHI:
+            deconvolve: NOT YET IMPLEMENTED FOR STEREO    
+            register: co-registering the map (Default: True)
+            normalize: Normalize intensity to 1s (Default: True)
+            alc: Annulus Limb Correction, Python implementation from Verbeek et al. (2014): (Default: True)
+            cut_limb: Set off-limb pixel to nan (Default: True)    
+            
+            SOHO/EUVI:
+            NOT YET IMPLEMENTED
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
 
-        if self.type == 'SDO':
+        if 'SDO' in self.type:
             #**kwargs: register= True, normalize = True,deconvolve = False, alc = True, degradation = True, cut_limb = True, wave = 193
             self.map  = cal.calibrate_aia(self.map, **kwargs)
-        elif self.type == 'STEREO':
+        elif 'STEREO' in self.type:
             #**kwargs: register= True, normalize = True,deconvolve = False, alc = True, cut_limb = True
             self.map  = cal.calibrate_stereo(self.map, **kwargs)
         else:
@@ -140,6 +295,25 @@ class pycatch:
 
     # calibrate EUV data
     def calibration_mag(self,**kwargs):
+        """
+        Calibrate the magnetogram.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            SDO/AIA:
+            rotate: rotate map to North == up (Default: True)
+            align: align with aia map (Default: True)
+            cut_limb: Set off-limb pixel to nan (Default: True)  
+            
+            SOHO/EUVI:
+            NOT YET IMPLEMENTED
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -149,6 +323,20 @@ class pycatch:
     
     # make submap
     def cutout(self,top=[1100,1100], bot=[-1100,-1100]):
+        """
+        Cut a subfield of the map (if a magnetogram is loaded it will also be cut.)
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            top: coordinates of top right corner (Default: [1100,1100])
+            bot: coordinates of bottom left corner (Default: [-1100,-1100])
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -162,24 +350,51 @@ class pycatch:
         return
 
     # rebin map
-    def rebin(self,ndim=[1024,1024]):
+    def rebin(self,ndim=[1024,1024],**kwargs):
+        """
+        Rebin maps to new resolution (if a magnetogram is loaded it will also be resampled.)
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            ndim: new dimensions of map (Default: [1024,1024])
+            takes all sunpy.map.Map.resample **kwargs (see sunpy documentation for more informations)
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
           
         new_dimensions = ndim * u.pixel
-        self.map = self.map.resample(new_dimensions)
+        self.map = self.map.resample(new_dimensions, **kwargs)
         #self.map.data[:]=ext.congrid(self.map.data,(ndim[0],ndim[1]))  #### TEST CONGRID VS RESAMPLE
         self.rebin_status = True
         self.point, self.curves,  self.threshold = None, None, None
         
         if self.magnetogram is not None:
-            self.magnetogram = self.magnetogram.resample(new_dimensions)
+            self.magnetogram = self.magnetogram.resample(new_dimensions, **kwargs)
             #self.magnetogram.data[:]=ext.congrid(self.magnetogram.data,(ndim[0],ndim[1]))  #### TEST CONGRID VS RESAMPLE
         return        
         
     # select seed point from EUV data
     def select(self,fsize=(10,10)):
+        """
+        Select seed point from intensity map.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            fsize: set figure size (Default: (10,10))
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -190,6 +405,20 @@ class pycatch:
             
     # set threshold
     def set_threshold(self,threshold, median = True, no_percentage = False):
+        """
+        Set coronal hole extraction threshold
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            median: input is assumed to be as fraction of the median solar disk intensity (default: True)
+            no_percentage: input is given percent of the median solar disk intensity (default: False), only works in conjunction with median = True
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -207,7 +436,20 @@ class pycatch:
                         
             
     # pick threshold from histogram
-    def threshold_from_hist(self,fsize=(10,10)):
+    def threshold_from_hist(self,fsize=(10,5)):
+        """
+        Select coronal hole extraction threshold from solar disk intensity histogram.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            fsize: set figure size (Default: (10,10))
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -216,7 +458,21 @@ class pycatch:
         return            
             
     # pick threshold from area curves
-    def threshold_from_curves(self,fsize=(10,10)):
+    def threshold_from_curves(self,fsize=(10,5)):
+        """
+        Select coronal hole extraction threshold from calculated area and uncertainty curves as function of intensity.
+        Curves need to be calculated first using pycatch.calculate_curves()
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            fsize: set figure size (Default: (10,10))
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -229,41 +485,88 @@ class pycatch:
         return                 
 
     # calculate area curves
-    def calculate_curves(self,fsize=(10,10),verbose=True):
+    def calculate_curves(self,verbose=True):
+        """
+        Calculate area and uncertainty curves as function of intensity.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            verbose: display warnings (Default: True)
+            
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
             
         if verbose:
-            print('> pycatch ## WARNING ##')
-            print('> pycatch ## Operation may take a bit ! ##')
-            print('> pycatch ## You may disable this message by using the keyword verbose = False ##')
-        
-        xloc, area, uncertainty =mapping.get_curves(self.map,self.seed,kernel=self.kernel)
-        self.curves = [xloc, area, uncertainty]
+            if self.map.meta['cdelt1'] < 2:
+                print('> pycatch ## WARNING ##')
+                print('> pycatch ## Operation may take a bit ! ##')
+                print('> pycatch ## You may disable this message by using the keyword verbose = False ##')
+            
+        xloc, area, uncertainty =mapping.get_curves(self.map,self.point,kernel=self.kernel)
+        self.curves = [xloc, area, uncertainty/area]
         return              
             
     # calculate binmap
-    def extract_ch(self):
+    def extract_ch(self, kernel=None):
+        """
+        Extract the coronal hole from the intensity map using the selected threshold and seed point.
+        Outputs list of five binary maps to pycatch.binmaps that are used for calculating the uncertainties.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            kernel: size of circular kernel for morphological operations (Default: None == depending on resolution)        
+        Returns 
+        -------
+        None
+
+        """
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
         if self.threshold is None:
             print('> pycatch ## NO INTENSITY THRESHOLD SET ##')
             return            
-
-        self.binmaps = [mapping.extract_ch(self.map, self.threshold, self.kernel,self.seed) for i in np.arange(5)-2]
+        if self.point is None:
+            print('> pycatch ## NO SEED POINT SELECTED ##')
+            return            
+        
+        if kernel is not None:
+            self.kernel = kernel
+        
+        binmaps=[mapping.extract_ch(self.map, self.threshold+i, self.kernel,self.point) for i in np.arange(5)-2]
+        
+        self.binmap =mapping.to_5binmap(binmaps)
         return               
             
     # calculate binmap
     def calculate_properties(self):
-        if self.binmapsmap is None:
-            print('> pycatch ## NO COORNAL HOLES EXTRACTED ##')
+        """
+        Calculate the morphological coronal hole properties from the extracted binary maps.
+        --------
+        Parameters
+        ----------
+            
+        Returns 
+        -------
+        None
+
+        """
+        
+        if self.binmap is None:
+            print('> pycatch ## NO CORNAL HOLES EXTRACTED ##')
             return
         
-        self.binmaps = [mapping.extract_ch(self.map, self.threshold, self.kernel,self.seed) for i in np.arange(5)-2]
-        binmap, a, da, com, dcom, ex, dex = mapping.catch_calc(self.binmaps, binary =True)     
-        imean,dimean,imed,dimed = mapping.get_intensity(self.binmaps, binary =True)  
+        binmaps=mapping.from_5binmap(self.binmap)
+        binmap, a, da, com, dcom, ex, dex = mapping.catch_calc(binmaps)     
+        imean,dimean,imed,dimed = mapping.get_intensity(binmaps, self.map)  
         
         dict1={'A':a,'dA':da,'Imean':imean,'dImean':dimean,'Imed':imed,'dImed':dimed,'CoM':com,'dCoM':dcom,'ex':ex,'dex':dex}
         self.properties.update(dict1)
@@ -271,15 +574,58 @@ class pycatch:
             
             
             
+    # save properties to txt file
+    def print_properties(self,file=None, overwrite=False):
+        """
+        Save properties to txt file.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            file: filepath to save, default is pycatch.dir (Default: False)
+            overwrite: overwrites file (Default: False)
+        Returns 
+        -------
+        None
+
+        """
+        if self.properties['A'] is None:
+            print('> pycatch ## WARNING ##')
+            print('> pycatch ## NO MORPHOLOGICAL PROPERTIES CALCULATED ##')
+            print('> pycatch ## OBJECT NOT SAVED ##')
+            return
+        
+       # if self.properties['B'] is None:
+       #     print('> pycatch ## WARNING ##')
+        #    print('> pycatch ## NO MAGNETIC PROPERTIES CALCULATED ##')
+        
+        
+        try:
+            if file is not None:
+                fpath = file
+            
+                datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+                typestr=self.map.meta['telescop'].replace('/','_')
+                nr=0
+                fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_v{nr}'+'.txt'
+                if not overwrite:
+                    while os.path.isfile(fpath):
+                        nr+=1
+                        fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
             
             
-            
-            
-            
-            
-            
-            
-            
+                with open(fpath, 'w') as f:
+                    f.write('pyCATCH v')
+                    
+                print(f'> pycatch ## PROPERTIES SAVED: {fpath}  ##')
+                
+                if no_original:
+                    self.original_map=dummy
+                    
+        except Exception as ex:
+                print("> pycatch ## Error during pickling object (Possibly unsupported):", ex)
+        return           
+                
             
             
             

@@ -34,7 +34,7 @@ import time
 
 mpl.rcParams['axes.unicode_minus'] = True
 mpl.rcParams['mathtext.fontset'] = 'stixsans'
-mpl.rcParams['font.size'] = 18
+mpl.rcParams['font.size'] = 16
 mpl.rcParams['axes.linewidth'] = 2
 mpl.rcParams['ytick.major.size']=    6    # major tick size in points
 mpl.rcParams['ytick.minor.size']=    4       # minor tick size in points
@@ -70,7 +70,7 @@ class SnappingCursor:
         self._last_index = None
         self._last_plindex = None
         # text location in axes coords
-        self.text = ax.text(0.98, 0.9, '',fontsize=14, transform=ax.transAxes,va='top', ha='right',bbox=(dict(facecolor='white',alpha=0.8,boxstyle='round')))
+        self.text = ax.text(0.02, 0.9, '',fontsize=14, transform=ax.transAxes,va='top', ha='left',bbox=(dict(facecolor='white',alpha=0.8,boxstyle='round')))
         self._creating_background = False
         ax.figure.canvas.mpl_connect('draw_event', self.on_draw)
         self.cid1=line.figure.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
@@ -79,6 +79,17 @@ class SnappingCursor:
         
     def on_draw(self, event):
         self.create_new_background()
+
+    def create_new_background(self):
+        if self._creating_background:
+            # discard calls triggered from within this function
+            return
+        self._creating_background = True
+        self.set_cross_hair_visible(False)
+        self.ax.figure.canvas.draw()
+        self.background = self.ax.figure.canvas.copy_from_bbox(self.ax.bbox)
+        self.set_cross_hair_visible(True)
+        self._creating_background = False
         
     def update_background(self):
         if self._creating_background:
@@ -125,19 +136,19 @@ class SnappingCursor:
             self.ax.draw_artist(self.horizontal_line)
             self.ax.draw_artist(self.vertical_line)
             
-            legendstr=f'{self.names[0]} :{x:.2f}\n'
+            legendstr=f'{self.names[0]} :{x:.2f}'
             if self.xe is not None:
                 xin = self.xe[index]
-                legendstr += f'{self.names[0]} :{xin:.2f}\n'
+                legendstr += f'\n{self.names[1]} :{xin:.2f}'
             
-            legendstr += f'\n{self.names[1]}={y:.2f}'
+            legendstr += f'\n{self.names[2]}={y:.4f}'
             if self.y2 is not None:
                 y2 = self.y2[index]
-                legendstr += f'\n{self.names[2]}={y2:.2f}'
+                legendstr += f'\n{self.names[3]}={y2:.4f}'
             
             if self.ye is not None:
                 y5 = self.ye[index]
-                legendstr += f'\n{self.names[-1]}={y5:.2f}'
+                legendstr += f'\n{self.names[-1]}={y5:.4f}'
 
             self.text.set_text(legendstr)
             self.ax.draw_artist(self.text)                
@@ -159,26 +170,12 @@ class SnappingCursor:
                 x = self.x[index]
                 self.location = x 
                 
-                self.ax.figure.canvas.restore_region(self.base_background)
-                p=self.ax.axvline(self.location,color='r', lw=1)
-                self.ax.draw_artist(p)
-                    
-                self.ax.figure.canvas.blit(self.ax.bbox)
-                self.update_background()
-
-            elif event.button == 3:
-                
-                self.ax.figure.canvas.restore_region(self.base_background)
-                self.ax.figure.canvas.blit(self.ax.bbox)
-                self.update_background()
-
-            elif event.button == 2:
-                
                 event.canvas.mpl_disconnect(self.cid1)
                 event.canvas.mpl_disconnect(self.cid2)     
                 
                 plt.close('all')
                 self.fig.canvas.stop_event_loop()
+                
                 
                 
                 
@@ -202,7 +199,7 @@ def get_thr_from_hist(map, fsize):
     mask=coordinate_is_on_solar_disk(hpc_coords)
     data=np.where(mask == True, map.data, np.nan)
     data_median = np.nanmedian(data)
-    hist, bedges = np.histogram(data, bins=150, range=(0,1.5*data_median), density=True)
+    hist, bedges = np.histogram(data, bins=150, range=(0,1*data_median), density=True)
     y=gaussian_filter1d(hist, 5)
     x=bedges[:-1]+(bedges[1]-bedges[0])/2
     
@@ -212,17 +209,17 @@ def get_thr_from_hist(map, fsize):
     fig = plt.figure(figsize=fsize)
     ax=fig.add_subplot()
 
-    ytiti=r'$N_{\mathrm{Normalized}$'
+    ytiti=r'$N_{\mathrm{Normalized}}$'
     ax.set_ylabel(ytiti)           
-    xtiti='I [DN/s]'    
+    xtiti=r'$I$ [DN/s]'    
     ax.set_xlabel(xtiti)
 
-    ax.set_xlim(0,1.5*data_median)
+    ax.set_xlim(0,1.*data_median)
     ax.set_ylim(0,np.nanmax(y)*1.1)
 
-    p,=ax.plot(x,y,linewidth=2, label=r'$N')
+    p,=ax.plot(x,y,linewidth=2, label=r'N')
 
-    snap_cursor = SnappingCursor(fig,ax,p,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$N$'], x2=100*x/data_median)
+    snap_cursor = SnappingCursor(fig,ax,p,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$N$'], xe=100*x/data_median)
     fig.canvas.start_event_loop(timeout=-1)
     plt.show()
     
@@ -247,25 +244,25 @@ def get_thr_from_curves(map, curves ,fsize):
     ax=fig.add_subplot()
     ax2 = ax.twinx()
 
-    ytiti=r'$Coronal Hole Area [$10^{10}$km$^2$]'
+    ytiti=r'Coronal Hole Area [$10^{10}$km$^2$]'
     ax.set_ylabel(ytiti, color='blue')           
     
     
-    ytiti=r'Uncertainty'
+    ytiti=r'Uncertainty $\epsilon$'
     ax2.set_ylabel(ytiti, color='red')   
 
    
-    xtiti='I [DN/s]'    
+    xtiti=r'$I$ [DN/s]'    
     ax.set_xlabel(xtiti)
 
     ax.set_xlim(0,x[-1])
     ax.set_ylim(0,np.nanmax(y1)*1.1)
     ax2.set_ylim(0,np.nanmax(y2)*1.1)
 
-    p1,=ax.plot(x,y1,linewidth=2)
-    p2,=ax.plot(x,y2,linewidth=2)
+    p1,=ax.plot(x,y1,linewidth=2,color='blue')
+    p2,=ax2.plot(x,y2,linewidth=2, color='red')
 
-    snap_cursor = SnappingCursor(fig,ax,p1,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$A$ [$10^{10}$km$^2$]',r'$\epsilon$'], x2=100*x/data_median)
+    snap_cursor = SnappingCursor(fig,ax,p1,line2=p2,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$A$ [$10^{10}$km$^2$]',r'$\epsilon$'], xe=100*x/data_median)
     fig.canvas.start_event_loop(timeout=-1)
     plt.show()
     

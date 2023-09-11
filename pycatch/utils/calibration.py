@@ -17,8 +17,8 @@ import aiapy.calibrate as cal
 
 #--------------------------------------------------------------------------------------------------
 #prep aia image
-def calibrate_aia(map, register= True, normalize = True,deconvolve = False, alc = True, degradation = True, cut_limb = True, wave = 193):
-    
+def calibrate_aia(map, register= True, normalize = True,deconvolve = False, alc = True, degradation = True, cut_limb = True):
+
     calmap=copy.deepcopy(map)
     #deconvolve image
     if deconvolve:
@@ -34,7 +34,7 @@ def calibrate_aia(map, register= True, normalize = True,deconvolve = False, alc 
     
     #correct for instrument degratation
     if degradation:
-        deg= cal.degradation(wave*u.angstrom,astropy.time.Time(calmap.meta['date-obs'],scale='utc') )
+        deg= cal.degradation(map.meta['wavelnth']*u.angstrom,astropy.time.Time(calmap.meta['date-obs'],scale='utc') )
         deg_data=calmap.data / deg
         deg_data[deg_data < 1] = 1
         calmap=sunpy.map.Map(((deg_data),calmap.meta))
