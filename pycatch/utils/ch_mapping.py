@@ -254,22 +254,32 @@ def get_intensity(binmaps,map):
 
 
 
+#--------------------------------------------------------------------------------------------------
+# calculate magnetic properties of  coronal hole 
 
 
+def catch_mag(binmaps, magmap):
+    if np.sum(binmaps[0].data) == 0:
+        return 0,0,0,0,0,0,0,0,0,0
+    
+    bs=np.zeros((5))
+    bus=np.zeros((5))
+    fs=np.zeros((5))
+    fus=np.zeros((5))
+    fb=np.zeros((5))
 
-
-
-
-
-
-
+    coreg=curve_corr(binmaps[0])
+    
+    for i,binmap in enumerate(binmaps):
+        bs[i],bus[i],fs[i],fus[i]=ch_flux(binmap,magmap, coreg=coreg)
+        
+    fb=fs/fus
+    
+    return np.nanmean(bs), catch_uncertainty(bs),  np.nanmean(bus), catch_uncertainty(bus), np.nanmean(fs), catch_uncertainty(fs),  np.nanmean(fus), catch_uncertainty(fus), np.nanmean(fb), catch_uncertainty(fb)     
 #--------------------------------------------------------------------------------------------------
 # calculate the signed flux (Mx), area (10^10 km^2) and signed B (G) for binary map
 def ch_flux(binmap, magmap, coreg=[0]):
-    if binmap.meta['telescop'] == 'STEREO':
-        rsun=binmap.meta['rsun']
-    else:
-        rsun=binmap.meta['r_sun']*binmap.meta['cdelt1']
+    rsun=map.meta['rsun_obs']
     arcsecTOkm = 1/rsun*696342
     data = np.where(binmap.data == binmap.data, 1, 0)
     
@@ -281,5 +291,7 @@ def ch_flux(binmap, magmap, coreg=[0]):
     tmparea = data * binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg * arcsecTOkm**2
     fluxcoreg = data * binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg * arcsecTOkm**2 * 1e10 
     tmpflux = data * magmap.data * fluxcoreg * tmparea
-    return np.nansum(tmpflux),np.nansum(tmparea)/1e10, np.nansum(tmpflux/tmparea)
+    tmpflux_abs = data * np.abs(magmap.data) * fluxcoreg * tmparea
+    
+    return np.nansum(tmpflux/tmparea),np.nansum(tmpflux_abs/tmparea),np.nansum(tmpflux)/1e20,np.nansum(tmpflux_abs)/1e20 
 

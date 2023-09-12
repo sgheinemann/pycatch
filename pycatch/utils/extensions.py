@@ -6,12 +6,47 @@ import astropy.units as u
 from astropy.coordinates import SkyCoord
 
 import sunpy
-import sunpy.map
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
 import scipy.interpolate
 import scipy.ndimage
 
+# initialize units and names
+
+def init_props():
+        idict             =  {'A':('Area','10^10 km^2'),                        'dA':('Area Uncertainty','10^10 km^2'),
+                              'Imean':('Mean Intensity','ct/s'),                'dImean':('Mean Intensity Uncertainty','ct/s'),
+                              'Imedian':('Median Intensity','ct/s'),            'dImedian':('Mean Intensity Uncertainty','ct/s'),
+                              'CoM':('Center of Mass (lon,lat)','°,°'),         'dCoM':('Center of Mass Uncertainty (lon,lat)','°,°'),
+                              'ex':('Extent (lon1,lon2,lat1,lat2) ','°,°,°,°'), 'dex':('Extent Uncertainty (lon1,lon2,lat1,lat2)','°,°,°,°'),
+                              'Bs':('Signed Mean Magnetic Flux Density','G'),   'dBs':('Signed Mean Magnetic Flux Density Uncertainty','G'),
+                              'Bus':('Unsigned Mean Magnetic Flux Density','G'),'dBus':('Unsigned Mean Magnetic Flux Density Uncertainty','G'),
+                              'Fs':('Signed Magnetic Flux','10^20 Mx'),         'dFs':('Signed Magnetic Flux Uncertainty','10^20 Mx'), 
+                              'Fus':('Unsigned Magnetic Flux','10^20 Mx'),      'dFus':('Unsigned Magnetic Flux Uncertainty','10^20 Mx'),                                                    
+                              'FB':('Flux Balance','%'),                        'dFB':('Flux Balance Uncertainty','%') }                                                     
+    
+        return idict
+
+#print properties to txt file
+def printtxt(file, pdict,names, version):
+        with open(file, 'w') as f:
+            f.write(f'# pyCATCH v{version}\n')
+            
+            f.write('#') 
+            for key,value in names.items():
+                f.write(f'{value[0]} ; ')
+            f.write('\n')
+            
+            f.write('#') 
+            for key,value in names.items():
+                f.write(f'{value[1]} ; ')
+            f.write('\n')    
+            
+            for key,value in pdict.items():
+                f.write(f'{value} ; ')
+        
+        return
+    
 # median from disk
 def median_disk(map):
         hpc_coords=all_coordinates_from_map(map)

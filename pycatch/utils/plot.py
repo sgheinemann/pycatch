@@ -268,3 +268,54 @@ def get_thr_from_curves(map, curves ,fsize):
     
     return snap_cursor.location    
     
+
+# open window to display coronal hole
+def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,**kwargs):
+    fig = plt.figure(figsize=fsize)
+    ax = fig.add_subplot(projection=map)
+    map.plot(axes=ax,**kwargs)
+    
+    if bmap is not None:
+        bmap.meta['bunit']=''
+        if uncertainty:
+            hdata=np.where(np.logical_and(bmap.data < 5, bmap.data >0), 1,np.nan)
+            umap=sunpy.map.Map((hdata,bmap.meta))
+            
+            umap.plot_settings['cmap']=plt.get_cmap('winter_r')
+            umap.plot(axes=ax, alpha =0.7, vmin=0.9, vmax=1. )
+    
+        if boundary:
+            hdata=np.where(bmap.data > 2, 1,np.nan)
+            bpmap=sunpy.map.Map((hdata,bmap.meta))
+    
+            contours = bpmap.contour(0.9)
+            
+            for contour in contours:
+                ax.plot_coord(contour, color='red')
+
+    plt.show()
+    if save:
+        fig.savefig(spath,bbox_inches='tight')
+        plt.close(fig)
+    
+    return 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

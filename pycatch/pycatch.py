@@ -41,6 +41,7 @@ class pycatch:
             map_file: filepath to EUV/Intensity map, needs to be loadable with sunpy.map.map() (Default: None)
             magnetogram_file: filepath to magnetogram, needs to be loadable with sunpy.map.map() (Default: None)
             load: loads previously saved pycatch object from path, overrides any other keywords (Default: None)
+            
         Returns 
         -------
         None
@@ -61,9 +62,10 @@ class pycatch:
         self.rebin_status       = None
         self.cutout_status      = None
         self.kernel             = None
-        self.binmap            = None
-        self.properties         =  {'A':None,'dA':None,'Imean':None,'dImean':None,'Imed':None,'dImed':None,'CoM':None,'dCoM':None,'ex':None,'dex':None}
-        self.properties
+        self.binmap             = None
+        self.properties         =  {'A':None,'dA':None,'Imean':None,'dImean':None,'Imed':None,'dImed':None,'CoM':None,'dCoM':None,'ex':None,'dex':None,
+                                    'Bs':None,'dBs':None,'Bus':None,'dBus':None,'Fs':None,'dFs':None,'Fus':None,'dFus':None,'FB':None,'dFB':None }
+        self.names              =  ext.init_props()
         
         if load is not None:
             
@@ -94,6 +96,7 @@ class pycatch:
             file: filepath to save, default is pycatch.dir (Default: False)
             overwrite: overwrites file (Default: False)
             no_original: does not save the original map to save disk space (Default: True)
+            
         Returns 
         -------
         None
@@ -113,11 +116,11 @@ class pycatch:
                 datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
                 typestr=self.map.meta['telescop'].replace('/','_')
                 nr=0
-                fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
+                fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_{nr}'+'.pkl'
                 if not overwrite:
                     while os.path.isfile(fpath):
                         nr+=1
-                        fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
+                        fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_{nr}'+'.pkl'
 
                 save_dict={}
                 for key,value in self.__dict__.items():
@@ -145,6 +148,7 @@ class pycatch:
             wave: set instrument (Default: 'AIA')
             wave: set wavelength of EUV image (Default: 193)
             takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
+            
         Returns 
         -------
         None
@@ -183,6 +187,7 @@ class pycatch:
         **kwargs : 
             cadence: download LOS magnetogram with _<cadence>s (Default: 45)
             takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
+            
         Returns 
         -------
         None
@@ -230,6 +235,7 @@ class pycatch:
         **kwargs : 
             mag: load magnetogram (Default: False)
             file: filepath to load, if not set loads pycatch.map_file or pycatch.magnetogram_file (Default: False)
+            
         Returns 
         -------
         None
@@ -523,6 +529,7 @@ class pycatch:
         ----------
         **kwargs : 
             kernel: size of circular kernel for morphological operations (Default: None == depending on resolution)        
+            
         Returns 
         -------
         None
@@ -546,33 +553,59 @@ class pycatch:
         self.binmap =mapping.to_5binmap(binmaps)
         return               
             
-    # calculate binmap
-    def calculate_properties(self):
+    # calculate morphological properties
+    def calculate_properties(self, mag=False, align=False):
         """
         Calculate the morphological coronal hole properties from the extracted binary maps.
         --------
         Parameters
         ----------
-            
+            **kwargs : 
+                mag: calculate magnetic properties INSTEAD (Default: False)    
+                align: calles calibration_mag to align with binary map (Default: False)
+                
         Returns 
         -------
         None
 
         """
-        
-        if self.binmap is None:
-            print('> pycatch ## NO CORNAL HOLES EXTRACTED ##')
-            return
-        
-        binmaps=mapping.from_5binmap(self.binmap)
-        binmap, a, da, com, dcom, ex, dex = mapping.catch_calc(binmaps)     
-        imean,dimean,imed,dimed = mapping.get_intensity(binmaps, self.map)  
-        
-        dict1={'A':a,'dA':da,'Imean':imean,'dImean':dimean,'Imed':imed,'dImed':dimed,'CoM':com,'dCoM':dcom,'ex':ex,'dex':dex}
-        self.properties.update(dict1)
+        if mag:
+            if self.binmap is None:
+                print('> pycatch ## NO CORNAL HOLES EXTRACTED ##')
+                return
+            
+            if self.magnetogram is None:
+                print('> pycatch ## NO MAGNETOGRAM LOADED ##')
+                return
+            
+            if align:
+                self.magnetogram = cal.calibrate_hmi(self.magnetogram,self.binmap)  
+                
+            if self.binmap.shape != self.magnetogram.shape:
+                print('> pycatch ## BINMAP AND MAGNETOGRAM ARE NOT MATCHING ##')
+                return
+            
+            binmaps=mapping.from_5binmap(self.binmap)
+            
+            bs,dbs,bus,dbus,fs,dfs,fs,dfs,fb,dfb = mapping.catch_mag(binmaps, self.magnetogram)  
+            
+            dict1={'Bs':bs,'dBs':dbs,'Bus':bus,'dBus':dbus,'Fs':fs,'dFs':dfs,'Fus':fs,'dFus':dfs,'FB':fb,'dFB':dfb}
+            self.properties.update(dict1)           
+
+        else:
+            if self.binmap is None:
+                print('> pycatch ## NO CORNAL HOLES EXTRACTED ##')
+                return
+            
+            binmaps=mapping.from_5binmap(self.binmap)
+            binmap, a, da, com, dcom, ex, dex = mapping.catch_calc(binmaps)     
+            imean,dimean,imed,dimed = mapping.get_intensity(binmaps, self.map)  
+            
+            dict1={'A':a,'dA':da,'Imean':imean,'dImean':dimean,'Imed':imed,'dImed':dimed,'CoM':com,'dCoM':dcom,'ex':ex,'dex':dex}
+            self.properties.update(dict1)
         return                 
             
-            
+           
             
     # save properties to txt file
     def print_properties(self,file=None, overwrite=False):
@@ -584,6 +617,7 @@ class pycatch:
         **kwargs : 
             file: filepath to save, default is pycatch.dir (Default: False)
             overwrite: overwrites file (Default: False)
+            
         Returns 
         -------
         None
@@ -592,12 +626,12 @@ class pycatch:
         if self.properties['A'] is None:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## NO MORPHOLOGICAL PROPERTIES CALCULATED ##')
-            print('> pycatch ## OBJECT NOT SAVED ##')
+            print('> pycatch ## PROPERTIES NOT SAVED ##')
             return
         
-       # if self.properties['B'] is None:
-       #     print('> pycatch ## WARNING ##')
-        #    print('> pycatch ## NO MAGNETIC PROPERTIES CALCULATED ##')
+        if self.properties['Bs'] is None:
+            print('> pycatch ## WARNING ##')
+            print('> pycatch ## NO MAGNETIC PROPERTIES CALCULATED ##')
         
         
         try:
@@ -607,26 +641,96 @@ class pycatch:
                 datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
                 typestr=self.map.meta['telescop'].replace('/','_')
                 nr=0
-                fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_v{nr}'+'.txt'
+                fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.txt'
                 if not overwrite:
                     while os.path.isfile(fpath):
                         nr+=1
-                        fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_v{nr}'+'.pkl'
+                        fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.pkl'
             
-            
-                with open(fpath, 'w') as f:
-                    f.write('pyCATCH v')
+                ext.printtxt(fpath, self.properties,self.names, pycatch.__version__)
                     
                 print(f'> pycatch ## PROPERTIES SAVED: {fpath}  ##')
                 
-                if no_original:
-                    self.original_map=dummy
-                    
+
         except Exception as ex:
-                print("> pycatch ## Error during pickling object (Possibly unsupported):", ex)
+                print("> pycatch ## Error during saving file:", ex)
         return           
                 
+    
+    # display coronal hole
+    def plot_map(self,boundary=True,uncertainty=True,original=False, cutout=None, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=True,**kwargs):
+        """
+        Display coronal hole plot.
+        --------
+        Parameters
+        ----------
+        **kwargs : 
+            boundary: overplot coronal hole boundary (Default: True)
+            uncertainty: show uncertainty of coronal hole boundary (Default: True)
+            original: show original image (Default: False)
+            cutout: display cutout around the extracted coronal hole (Default: None; Format: [[xbot,ybot],[xtop,ytop])
+            mag: show magnetogram instead (Default: False)
+            fsize: set figure size (Default: (10,10))
+            save: save and close figure (Default: False)
+            sfile: filepath to save image (otherwise use standard path), only in conjunction with save=True (Default: None)
+            overwrite: overwrites plot (Default: True)
+            takes all sunpy.map.Map.plot() **kwargs (see sunpy documentation for more informations)
             
+        Returns 
+        -------
+        None
+
+        """
+        if self.map is None:
+            print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
+            return
+        if self.magnetogram is None and mag == True:
+            print('> pycatch ## NO MAGNETOGRAM LOADED ##')
+            return
+        if (boundary == True or uncertainty == True) and self.binmap is None:
+            print('> pycatch ## NO CORONAL HOLE BOUNDARY EXTRACTED ##')
+            return
+
+        if original == True and self.original_map is None:
+            print('> pycatch ## NO ORIGINAL MAP LOADED ##')
+            return
+        
+        addstr=''
+        if original:
+            pmap=self.original_map
+            addstr+='_original'
+        elif mag:
+            pmap=self.magnetogram
+            addstr+='_mag'
+        else:
+            pmap=self.map
+            
+        if cutout is not None:
+            pmap=ext.cutout(pmap,cutout[1],cutout[0])
+            pbinmap=ext.cutout(self.binmap,cutout[1],cutout[0])
+            addstr+='_cut'
+        else:
+            pbinmap=self.binmap
+            
+        if boundary:
+            addstr+='_boundary'
+        if uncertainty:
+            addstr+='_uncertainty'
+
+        datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+        typestr=self.map.meta['telescop'].replace('/','_')
+        nr=0
+        fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.pdf'
+        if not overwrite:
+            while os.path.isfile(fpath):
+                nr+=1
+                fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.pdf'
+                                
+                                
+        poptions.plot_map(pmap,pbinmap,boundary,uncertainty, fsize, save, fpath,**kwargs)
+            
+        
+        return                     
             
             
             
