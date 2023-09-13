@@ -99,6 +99,14 @@ def median_disk(map):
     data=np.where(mask == True, map.data, np.nan)
     return np.nanmedian(data)
 
+#--------------------------------------------------------------------------------------------------   
+# get extent
+def get_extent(map):
+    hpc_coords=all_coordinates_from_map(map)
+    mask=1
+    bot, top = 1,1
+    return bot, top
+    
 #--------------------------------------------------------------------------------------------------
 # find nearest index
 def find_nearest(array, value):

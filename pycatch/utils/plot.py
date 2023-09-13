@@ -13,7 +13,7 @@ import sunpy.map
 import sunpy.util.net
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
-
+import pycatch.utils.ch_mapping as mapping
 
 mpl.rcParams['axes.unicode_minus'] = True
 mpl.rcParams['mathtext.fontset'] = 'stixsans'
@@ -196,7 +196,7 @@ class SnappingCursor:
                 
                 
 # open window to click for coronal hole seed point
-def get_point_from_map(map, fsize):
+def get_point_from_map(map, hint, fsize):
     """
     Display a solar map and allow the user to interactively select a point on the map.
     
@@ -215,6 +215,19 @@ def get_point_from_map(map, fsize):
     fig = plt.figure(figsize=fsize)
     ax = fig.add_subplot(projection=map)
     map.plot(axes=ax)
+    
+    if hint:
+        thr=mapping.median_disk(map)*0.35
+        
+        hpc_coords=all_coordinates_from_map(map)
+        mask=coordinate_is_on_solar_disk(hpc_coords)
+        data=np.where(np.logical_and(mask == True,map.data <= thr),1, np.nan)
+        thrmap=sunpy.map.Map((data,map.meta))
+        
+        thrmap.plot_settings['cmap']=plt.get_cmap('spring')
+        thrmap.plot(axes=ax, alpha =0.5, vmin=0.9, vmax=1.1 )
+
+    
     plt.show()
     point=plt.ginput(n=1, timeout=120, show_clicks=True, mouse_add=MouseButton.LEFT, mouse_pop=MouseButton.RIGHT, mouse_stop=MouseButton.MIDDLE )
     plt.close()

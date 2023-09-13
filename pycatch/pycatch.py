@@ -181,10 +181,10 @@ class pycatch:
                         nr+=1
                         fpath=self.dir+'pyCATCH_'+typestr+'_'+datestr+f'_{nr}'+'.pkl'
 
-                save_dict={}
-                for key,value in self.__dict__.items():
-                    save_dict.update({key:value}) 
-                    
+            save_dict={}
+            for key,value in self.__dict__.items():
+                save_dict.update({key:value}) 
+                
             with open(fpath, "wb") as f:
                 pickle.dump(save_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
             print(f'> pycatch ## OBJECT SAVED: {fpath}  ##')
@@ -458,14 +458,16 @@ class pycatch:
         return        
         
     # select seed point from EUV data
-    def select(self,fsize=(10,10)):
+    def select(self,hint=False,fsize=(10,10)):
         """
         Select a seed point from the intensity map.
         
         Parameters
         ----------
+            hint : bool, optional
+                If True, highlights possible coronal holes. Default is False. 
             fsize : tuple, optional
-                Set the figure size (default: (10, 10)).
+                Set the figure size. Default is (10, 10).
         
         Returns 
         -------
@@ -476,7 +478,7 @@ class pycatch:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
         
-        self.point=poptions.get_point_from_map(self.map, fsize)
+        self.point=poptions.get_point_from_map(self.map,hint, fsize)
         
         return
             
@@ -714,7 +716,7 @@ class pycatch:
         try:
             if file is not None:
                 fpath = file
-            
+            else:
                 datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
                 typestr=self.map.meta['telescop'].replace('/','_')
                 nr=0
@@ -722,7 +724,7 @@ class pycatch:
                 if not overwrite:
                     while os.path.isfile(fpath):
                         nr+=1
-                        fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.pkl'
+                        fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.txt'
             
                 ext.printtxt(fpath, self.properties,self.names, pycatch.__version__)
                     
@@ -756,7 +758,8 @@ class pycatch:
             save : bool, optional
                 Save and close the figure. Default is False.
             sfile : str, optional
-                Filepath to save the image (use only in conjunction with save=True). Default is None.
+                Filepath to save the image as pdf. If not provided, a default filename will be generated based on observation metadata.
+                Use only in conjunction with save=True. Default is None.
             overwrite : bool, optional
                 Overwrite the plot if it already exists. Default is True.
            **kwargs**: keyword arguments
@@ -803,27 +806,82 @@ class pycatch:
         if uncertainty:
             addstr+='_uncertainty'
 
-        datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
-        typestr=self.map.meta['telescop'].replace('/','_')
-        nr=0
-        fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.pdf'
-        if not overwrite:
-            while os.path.isfile(fpath):
-                nr+=1
-                fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.pdf'
+        if sfile is not None:
+            fpath = sfile
+        else:
+            datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+            typestr=self.map.meta['telescop'].replace('/','_')
+            nr=0
+            fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.pdf'
+            if not overwrite:
+                while os.path.isfile(fpath):
+                    nr+=1
+                    fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+f'_{nr}'+'.pdf'
                                 
                                 
         poptions.plot_map(pmap,pbinmap,boundary,uncertainty, fsize, save, fpath,**kwargs)
             
         
         return                     
+                
             
+    # save binary map to fits file
+    def bin2fits(self,file=None, small=False, overwrite=False):          
+        """
+        Save the coronal hole binary map to a FITS file.
+    
+        Parameters
+        ----------
+        file : str, optional
+            Filepath to save the FITS file. If not provided, a default filename will be generated based on observation metadata (default: None).
+        small : bool, optional
+            Save a smaller region around the coronal hole. Default is False.
+        overwrite : bool, optional
+            Flag to overwrite the file if it already exists. Default is False.
+    
+        Returns
+        -------
+        None
+        """            
+        
+        if self.binmap is None:
+            print('> pycatch ## WARNING ##')
+            print('> pycatch ## NO CORONAL HOLE EXTRACTED ##')
+            print('> pycatch ## NO FITS FILE SAVED ##')
+            return
+        
+        try:  
+        
+            if file is not None:
+                fpath = file
+            else:
+                datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+                typestr=self.map.meta['telescop'].replace('/','_')
+                nr=0
+                fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+f'_{nr}'+'.fits'
+                
+                if not overwrite:
+                    while os.path.isfile(fpath):
+                        nr+=1
+                        fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+f'_{nr}'+'.fits'
+                
+            if overwrite:
+                if os.path.isfile(fpath):
+                    os.remove(fpath)
             
-            
-            
-            
-            
-            
+            if small:
+                bot,top=ext.get_extent(self.binmap)
+                pbinmap=ext.cutout(self.binmap,top,bot)
+                pbinmap.save(fpath)
+                pass
+            else:
+                self.binmap.save(fpath)
+                
+            print(f'> pycatch ## CORONAL HOLE EXTRACTION SAVED: {fpath}  ##')
+                
+        except Exception as ex:
+                print("> pycatch ## Error during saving file:", ex)
+        return                       
             
             
 
