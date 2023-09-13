@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pycatch.utils.ch_mapping Module &mdash; pyCATCH  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="pycatch.utils.extensions Module" href="extensions.html" />
+    <link rel="prev" title="pycatch.utils.calibration Module" href="calibration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyCATCH
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with pyCATCH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">pycatch Package Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#pycatch-pycatch-package">pycatch.pycatch Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#pycatch-utils-package">pycatch.utils Package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html">pycatch.utils Package Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="calibration.html">pycatch.utils.calibration Module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pycatch.utils.ch_mapping Module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.calc_area_curves"><code class="docutils literal notranslate"><span class="pre">calc_area_curves()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.catch_calc"><code class="docutils literal notranslate"><span class="pre">catch_calc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.catch_mag"><code class="docutils literal notranslate"><span class="pre">catch_mag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.catch_uncertainty"><code class="docutils literal notranslate"><span class="pre">catch_uncertainty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.ch_area"><code class="docutils literal notranslate"><span class="pre">ch_area()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.ch_flux"><code class="docutils literal notranslate"><span class="pre">ch_flux()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.curve_corr"><code class="docutils literal notranslate"><span class="pre">curve_corr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.cutout"><code class="docutils literal notranslate"><span class="pre">cutout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.extract_ch"><code class="docutils literal notranslate"><span class="pre">extract_ch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.from_5binmap"><code class="docutils literal notranslate"><span class="pre">from_5binmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.get_curves"><code class="docutils literal notranslate"><span class="pre">get_curves()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.get_intensity"><code class="docutils literal notranslate"><span class="pre">get_intensity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.make_circle"><code class="docutils literal notranslate"><span class="pre">make_circle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.min_picker"><code class="docutils literal notranslate"><span class="pre">min_picker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.morph"><code class="docutils literal notranslate"><span class="pre">morph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.ch_mapping.to_5binmap"><code class="docutils literal notranslate"><span class="pre">to_5binmap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="extensions.html">pycatch.utils.extensions Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot.html">pycatch.utils.plot Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyCATCH</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pycatch Package Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">pycatch.utils Package Documentation</a></li>
+      <li class="breadcrumb-item active">pycatch.utils.ch_mapping Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pycatch/utils/ch_mapping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pycatch-utils-ch-mapping-module">
+<h1>pycatch.utils.ch_mapping Module<a class="headerlink" href="#pycatch-utils-ch-mapping-module" title="Permalink to this heading"></a></h1>
+<p>The <cite>ch_mapping</cite> module provides map operation functions.</p>
+<span class="target" id="module-pycatch.utils.ch_mapping"></span><dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.calc_area_curves">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">calc_area_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coreg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.calc_area_curves" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper to calculate area curves for a coronal hole in a solar map.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map containing coronal hole data.</p>
+</dd>
+<dt>th<span class="classifier">float</span></dt><dd><p>The threshold value for coronal hole extraction.</p>
+</dd>
+<dt>kernel<span class="classifier">int or None</span></dt><dd><p>The size of the circular kernel for morphological operations.</p>
+</dd>
+<dt>seed<span class="classifier">tuple</span></dt><dd><p>The seed point coordinates (lon, lat) for coronal hole extraction.</p>
+</dd>
+<dt>minval<span class="classifier">float</span></dt><dd><p>The minimum threshold value to consider for area calculation.</p>
+</dd>
+<dt>coreg<span class="classifier">sunpy.map.Map</span></dt><dd><p>The coregistered solar map for area calculation.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>The area curves for the coronal hole as function of intensity.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.catch_calc">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">catch_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.catch_calc" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate coronal hole properties from a list of binary maps.</p>
+<p>This function calculates various properties of coronal holes, such as area, center of mass, extent, and their uncertainties, from a list of binary maps representing different levels of coronal hole segmentation.</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmaps<span class="classifier">list of sunpy.map.Map</span></dt><dd><p>A list of binary maps representing different levels of coronal hole segmentation.</p>
+</dd>
+<dt>binary<span class="classifier">bool, optional</span></dt><dd><p>Indicates whether the input binary maps are binary (Default is True).</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>sunpy.map.Map</dt><dd><p>A binary map representing the combined coronal hole regions.</p>
+</dd>
+<dt>float</dt><dd><p>The mean area of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean area of coronal holes.</p>
+</dd>
+<dt>numpy.ndarray</dt><dd><p>An array containing the mean center of mass (lon, lat) of coronal holes.</p>
+</dd>
+<dt>numpy.ndarray</dt><dd><p>An array containing the uncertainty of the mean center of mass (lon, lat) of coronal holes.</p>
+</dd>
+<dt>numpy.ndarray</dt><dd><p>An array containing the mean extent (lon1, lon2, lat1, lat2) of coronal holes.</p>
+</dd>
+<dt>numpy.ndarray</dt><dd><p>An array containing the uncertainty of the mean extent (lon1, lon2, lat1, lat2) of coronal holes.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.catch_mag">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">catch_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.catch_mag" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper to calculate magnetic properties of coronal holes from a list of binary maps and a magnetic field map.</p>
+<p>This function calculates various magnetic properties of coronal holes, including signed and unsigned mean magnetic flux density, signed and unsigned magnetic flux, and flux balance, from a list of binary maps representing different levels of coronal hole segmentation and a magnetic field map.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmaps<span class="classifier">list of sunpy.map.Map</span></dt><dd><p>A list of binary maps representing different levels of coronal hole segmentation.</p>
+</dd>
+<dt>magmap<span class="classifier">sunpy.map.Map</span></dt><dd><p>The magnetic field map.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The mean signed magnetic flux density of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean signed magnetic flux density of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The mean unsigned magnetic flux density of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean unsigned magnetic flux density of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The mean signed magnetic flux of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean signed magnetic flux of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The mean unsigned magnetic flux of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean unsigned magnetic flux of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The mean flux balance of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean flux balance of coronal holes.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.catch_uncertainty">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">catch_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.catch_uncertainty" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the uncertainty of a given data array.</p>
+<p>This function computes the uncertainty of a given data array using the maximum absolute deviation from the mean.</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>x<span class="classifier">numpy.ndarray</span></dt><dd><p>The input data array for which uncertainty is calculated.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The uncertainty value calculated as the maximum absolute deviation from the mean.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.ch_area">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">ch_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coreg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.ch_area" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the area of a coronal hole in a solar map.</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map containing coronal hole data.</p>
+</dd>
+<dt>coreg<span class="classifier">numpy.ndarray, optional</span></dt><dd><p>An optional curvature correction factor for the map. If not provided, it will be computed internally.</p>
+</dd>
+<dt>binary<span class="classifier">bool, optional</span></dt><dd><p>If True, the map is treated as binary data, where coronal hole pixels have a value of 1. If False, the map is thresholded to binary data. Default is False.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h2>Returns<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The calculated area of the coronal hole in 10^10 km^2.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.ch_flux">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">ch_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coreg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.ch_flux" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate magnetic properties of a coronal hole region from a binary map and a magnetic field map.</p>
+<p>This function calculates various magnetic properties of a coronal hole region, including signed mean magnetic flux density, unsigned mean magnetic flux density, signed magnetic flux, and unsigned magnetic flux, based on a binary map representing the coronal hole region and a magnetic field map.</p>
+<section id="id9">
+<h2>Parameters<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmap<span class="classifier">sunpy.map.Map</span></dt><dd><p>A binary map representing the coronal hole region.</p>
+</dd>
+<dt>magmap<span class="classifier">sunpy.map.Map</span></dt><dd><p>The magnetic field map.</p>
+</dd>
+<dt>coreg<span class="classifier">list of float, optional</span></dt><dd><p>An optional curvature correction factor for the map. If not provided, it will be computed internally.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The mean signed magnetic flux density of the coronal hole region.</p>
+</dd>
+<dt>float</dt><dd><p>The mean unsigned magnetic flux density of the coronal hole region.</p>
+</dd>
+<dt>float</dt><dd><p>The signed magnetic flux of the coronal hole region.</p>
+</dd>
+<dt>float</dt><dd><p>The unsigned magnetic flux of the coronal hole region.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.curve_corr">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">curve_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.curve_corr" title="Permalink to this definition"></a></dt>
+<dd><p>Compute a correction factor for curvature in a solar map.</p>
+<section id="id11">
+<h2>Parameters<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map for which the correction factor is computed.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A 2D array representing the correction factor for curvature in the solar map.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.cutout">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">cutout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.cutout" title="Permalink to this definition"></a></dt>
+<dd><p>Create a cutout region from a solar map based on top and bottom coordinates.</p>
+<p>This function generates a cutout region from the input solar map (<cite>map</cite>) using specified top and bottom coordinates.</p>
+<section id="id13">
+<h2>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map from which the cutout region will be created.</p>
+</dd>
+<dt>top<span class="classifier">tuple</span></dt><dd><p>A tuple containing the top-right corner coordinates (x, y) of the cutout region in arcseconds.</p>
+</dd>
+<dt>bot<span class="classifier">tuple</span></dt><dd><p>A tuple containing the bottom-left corner coordinates (x, y) of the cutout region in arcseconds.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h2>Returns<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>sunpy.map.Map</dt><dd><p>A cutout region of the input solar map based on the specified coordinates.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.extract_ch">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">extract_ch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.extract_ch" title="Permalink to this definition"></a></dt>
+<dd><p>Extract a coronal hole from a solar map based on a threshold and seed point.</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map containing coronal hole data.</p>
+</dd>
+<dt>thr<span class="classifier">float</span></dt><dd><p>The threshold value for coronal hole extraction.</p>
+</dd>
+<dt>kernel<span class="classifier">int or None</span></dt><dd><p>The size of the circular kernel for morphological operations. If None, the kernel size is automatically determined based on map resolution.</p>
+</dd>
+<dt>seed<span class="classifier">tuple</span></dt><dd><p>The seed point coordinates (x, y) for coronal hole extraction.</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h2>Returns<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>sunpy.map.Map</dt><dd><p>A “binary” map containing the extracted coronal hole region.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.from_5binmap">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">from_5binmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.from_5binmap" title="Permalink to this definition"></a></dt>
+<dd><p>Split a 5-level binary map into multiple binary maps.</p>
+<section id="id17">
+<h2>Parameters<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmap<span class="classifier">sunpy.map.Map</span></dt><dd><p>A 5-level binary map containing multiple threshold levels.</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h2>Returns<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of sunpy.map.Map</dt><dd><p>A list of binary maps, one for each threshold level extracted from the input 5-level binary map.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.get_curves">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">get_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.get_curves" title="Permalink to this definition"></a></dt>
+<dd><p>Top-level wrapper to calculate coronal hole area curves for a range of threshold values.</p>
+<p>This function calculates coronal hole area curves for a range of threshold values, optionally considering an upper limit. It also computes uncertainty in the area curves. The function uses parallel processing to speed up computation.</p>
+<section id="id19">
+<h2>Parameters<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map containing coronal hole data.</p>
+</dd>
+<dt>seed<span class="classifier">tuple</span></dt><dd><p>The seed point coordinates (x, y) for coronal hole extraction.</p>
+</dd>
+<dt>kernel<span class="classifier">int or None, optional</span></dt><dd><p>The size of the circular kernel for morphological operations. Default is None.</p>
+</dd>
+<dt>upper_lim<span class="classifier">int or False, optional</span></dt><dd><p>The upper limit for the threshold range. If False, the limit is calculated based on the median value of the solar map data. Default is False.</p>
+</dd>
+<dt>cores<span class="classifier">int, optional</span></dt><dd><p>The number of CPU cores to use for parallel processing. Default is 8.</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h2>Returns<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing three arrays:
+- The threshold range.
+- The calculated area curves for the coronal hole.
+- The uncertainty in the area curves.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.get_intensity">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">get_intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.get_intensity" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate intensity properties of coronal holes from a list of binary maps.</p>
+<p>This function calculates the mean and median intensity properties of coronal holes from a list of binary maps representing different levels of coronal hole segmentation.</p>
+<section id="id21">
+<h2>Parameters<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmaps<span class="classifier">list of sunpy.map.Map</span></dt><dd><p>A list of binary maps representing different levels of coronal hole segmentation.</p>
+</dd>
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The original intensity map.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h2>Returns<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The mean intensity of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the mean intensity of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The median intensity of coronal holes.</p>
+</dd>
+<dt>float</dt><dd><p>The uncertainty of the median intensity of coronal holes.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.make_circle">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">make_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.make_circle" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a binary circular mask.</p>
+<p>This function generates a binary circular mask with a specified size, where the circle is centered within the mask.</p>
+<section id="id23">
+<h2>Parameters<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>s<span class="classifier">int</span></dt><dd><p>The size of the circular mask (side length).</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h2>Returns<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A binary circular mask with the specified size.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.min_picker">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">min_picker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.min_picker" title="Permalink to this definition"></a></dt>
+<dd><p>Find the minimum value in a local neighborhood around a seed point in a data array.</p>
+<p>This function identifies the minimum value within a 5x5 local neighborhood centered around a seed point (xs, ys)
+in the input data array.</p>
+<section id="id25">
+<h2>Parameters<a class="headerlink" href="#id25" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>seed<span class="classifier">tuple</span></dt><dd><p>The seed point coordinates (xs, ys) as a tuple.</p>
+</dd>
+<dt>data<span class="classifier">array-like</span></dt><dd><p>The input data array in which to search for the minimum value.</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h2>Returns<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The minimum value within the local neighborhood.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.morph">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">morph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.morph" title="Permalink to this definition"></a></dt>
+<dd><p>morphologyEx(src, op, kernel[, dst[, anchor[, iterations[, borderType[, borderValue]]]]]) -&gt; dst
+.   &#64;brief Performs advanced morphological transformations.
+.   
+.   The function cv::morphologyEx can perform advanced morphological transformations using an erosion and dilation as
+.   basic operations.
+.   
+.   Any of the operations can be done in-place. In case of multi-channel images, each channel is
+.   processed independently.
+.   
+.   &#64;param src Source image. The number of channels can be arbitrary. The depth should be one of
+.   CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.
+.   &#64;param dst Destination image of the same size and type as source image.
+.   &#64;param op Type of a morphological operation, see #MorphTypes
+.   &#64;param kernel Structuring element. It can be created using #getStructuringElement.
+.   &#64;param anchor Anchor position with the kernel. Negative values mean that the anchor is at the
+.   kernel center.
+.   &#64;param iterations Number of times erosion and dilation are applied.
+.   &#64;param borderType Pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
+.   &#64;param borderValue Border value in case of a constant border. The default value has a special
+.   meaning.
+.   &#64;sa  dilate, erode, getStructuringElement
+.   &#64;note The number of iterations is the number of times erosion or dilatation operation will be applied.
+.   For instance, an opening operation (#MORPH_OPEN) with two iterations is equivalent to apply
+.   successively: erode -&gt; erode -&gt; dilate -&gt; dilate (and not erode -&gt; dilate -&gt; erode -&gt; dilate).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.ch_mapping.to_5binmap">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.ch_mapping.</span></span><span class="sig-name descname"><span class="pre">to_5binmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binmaps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.ch_mapping.to_5binmap" title="Permalink to this definition"></a></dt>
+<dd><p>Combine multiple binary maps into a single 5-level binary map.</p>
+<section id="id27">
+<h2>Parameters<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>binmaps<span class="classifier">list of sunpy.map.Map</span></dt><dd><p>A list of binary maps to be combined.</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h2>Returns<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>sunpy.map.Map</dt><dd><p>A single 5-level binary map where each level represents a different threshold value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="calibration.html" class="btn btn-neutral float-left" title="pycatch.utils.calibration Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="extensions.html" class="btn btn-neutral float-right" title="pycatch.utils.extensions Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Stephan G. Heinemann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

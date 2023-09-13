@@ -1,36 +1,19 @@
 import os, sys
 
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib import cm
-import matplotlib.colors as mcolor
 from matplotlib.backend_bases import MouseButton
 
-import astropy.units as u
-
-import scipy.ndimage as ndi
 
 import sunpy
 import sunpy.map
 import sunpy.util.net
-from sunpy.coordinates import frames
-
-from astropy.coordinates import SkyCoord
-import astropy.constants as const
-from astropy.io import fits
-import astropy.time
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
-import copy
 
-from scipy.ndimage import gaussian_filter1d
-from cv2 import morphologyEx as morph
-from cv2 import MORPH_OPEN,MORPH_CLOSE
-import cv2
 
-import numexpr as ne
-import time
 
 mpl.rcParams['axes.unicode_minus'] = True
 mpl.rcParams['mathtext.fontset'] = 'stixsans'
@@ -54,6 +37,38 @@ class SnappingCursor:
     closest to the *x* position of the cursor.
 
     For simplicity, this assumes that *x* values of the data are sorted.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        The matplotlib figure to which the cursor is attached.
+    ax : matplotlib.axes.Axes
+        The matplotlib axes to which the cursor is attached.
+    line : matplotlib.lines.Line2D
+        The line for which the cursor will snap to data points.
+    line2 : matplotlib.lines.Line2D, optional
+        An optional second line for which the cursor can snap to data points.
+    names : list of str, optional
+        A list of names for the y-values displayed in the cursor's tooltip.
+    xe : array-like, optional
+        An array of x-values associated with the data points.
+    ye : array-like, optional
+        An array of y-values associated with the data points.
+
+    Attributes
+    ----------
+    location : float
+        The x-value of the currently snapped data point.
+    
+    Methods
+    -------
+    on_mouse_click(event)
+        Handles mouse clicks to capture the cursor's location.
+    on_mouse_move(event)
+        Handles mouse movement to snap the cursor to the nearest data point.
+    on_draw(event)
+        Handles drawing events to update the cursor's background.
+
     """
     def __init__(self,fig, ax, line, line2=None, names=['y'],xe=None,ye=None):
         self.ax = ax
@@ -182,6 +197,21 @@ class SnappingCursor:
                 
 # open window to click for coronal hole seed point
 def get_point_from_map(map, fsize):
+    """
+    Display a solar map and allow the user to interactively select a point on the map.
+    
+    Parameters
+    ----------
+    map : sunpy.map.GenericMap
+        The solar map to be displayed.
+    fsize : tuple of int
+        The size of the figure (width, height) in inches.
+    
+    Returns
+    -------
+    point : list of float
+        A list containing the coordinates (x, y) of the selected point on the solar map.
+    """
     fig = plt.figure(figsize=fsize)
     ax = fig.add_subplot(projection=map)
     map.plot(axes=ax)
@@ -193,7 +223,21 @@ def get_point_from_map(map, fsize):
 
 # open window to click in histogram for threshold / use snapping cursor
 def get_thr_from_hist(map, fsize):
+    """
+    Interacticely get a threshold value from a histogram of solar disk data.
     
+    Parameters
+    ----------
+    map : sunpy.map.GenericMap
+        The solar map for which the threshold will be determined.
+    fsize : tuple of int
+        The size of the figure (width, height) in inches.
+    
+    Returns
+    -------
+    thr : float
+        The threshold value determined interactively from the histogram.
+    """
     # calc hist of solar disk
     hpc_coords=all_coordinates_from_map(map)
     mask=coordinate_is_on_solar_disk(hpc_coords)
@@ -228,7 +272,25 @@ def get_thr_from_hist(map, fsize):
 
 # open window to click in area curves for threshold / use snapping cursor
 def get_thr_from_curves(map, curves ,fsize):
-    
+    """
+    Interactively get a threshold value from a plot of coronal hole area curves.
+
+    Parameters
+    ----------
+    map : sunpy.map.GenericMap
+        The solar map for which the threshold will be determined.
+    curves : tuple
+        A tuple containing the data for plotting the curves, where `curves[0]` is
+        the x-axis data, `curves[1]` is the y-axis data for the first curve, and
+        `curves[2]` is the y-axis data for the second curve.
+    fsize : tuple of int
+        The size of the figure (width, height) in inches.
+
+    Returns
+    -------
+    thr : float
+        The threshold value determined interactively from the plot.
+    """    
     hpc_coords=all_coordinates_from_map(map)
     mask=coordinate_is_on_solar_disk(hpc_coords)
     data=np.where(mask == True, map.data, np.nan)
@@ -271,6 +333,32 @@ def get_thr_from_curves(map, curves ,fsize):
 
 # open window to display coronal hole
 def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,**kwargs):
+    """
+    Plot a solar map with optional boundaries and uncertainty overlays.
+    
+    Parameters
+    ----------
+    map : sunpy.map.GenericMap
+        The solar map to be plotted.
+    bmap : sunpy.map.GenericMap or None
+        A binary mask map for boundaries or uncertainty, or None if not used.
+    boundary : bool
+        Whether to plot boundaries on the map.
+    uncertainty : bool
+        Whether to overlay uncertainty information on the map.
+    fsize : tuple of int
+        The size of the figure (width, height) in inches.
+    save : bool
+        Whether to save the figure to a file.
+    spath : str
+        The path to save the figure if `save` is True.
+    **kwargs
+        Additional keyword arguments to pass to the `sunpy.map.Map.plot` function.
+    
+    Returns
+    -------
+    None
+    """
     fig = plt.figure(figsize=fsize)
     ax = fig.add_subplot(projection=map)
     map.plot(axes=ax,**kwargs)

@@ -1,10 +1,3 @@
-"""
-pycatch
-
-main file
-
-@author: S.G. Heinemann
-"""
 import os,sys
 import numpy as np
 import pathlib
@@ -22,31 +15,95 @@ import pycatch.utils.calibration as cal
 import pycatch.utils.extensions as ext
 import pycatch.utils.plot as poptions
 import pycatch.utils.ch_mapping as mapping
-import pycatch as catch
-import pycatch
-from pycatch._version import __version__
+from _version import __version__
 
 class pycatch:
+    """
+    A Python library for extracting and analyzing coronal holes from solar EUV images and magnetograms.
+
+    Attributes
+    ----------
+        dir : str
+            The directory path. Defaults to the user's home directory if not provided.
+        save_dir : str
+            The save directory path. Defaults to the user's home directory if not provided.
+        map_file : str
+            The map file path.
+        magnetogram_file : str
+            The magnetogram file path.
+        map : sunpy.map.Map
+            The loaded and configured EUV map.
+            This map contains both the 2D data array and metadata associated with the EUV observation.
+        original_map : sunpy.map.Map
+            The original EUV map.
+            This map contains the initially loaded EUV observation before any operations.
+        magnetogram : sunpy.map.Map
+            The loaded and configured magnetogram.
+            This map contains both the 2D data array and metadata associated with the magnetic field data.
+        point : list of float
+            Seed point for coronal hole extraction.
+        curves : tuple
+            - The threshold range.
+            - The calculated area curves for the coronal hole.
+            - The uncertainty in the area curves.
+        threshold : float
+            Coronal hole extraction threshold.
+        type : str
+            Placeholder for type information.
+        rebin_status : bool
+            Whether the map was rebinned.
+        cutout_status : bool
+            Whether the map was cutout.
+        kernel : int
+            Size of the circular kernel for morphological operations. 
+        binmap : sunpy.map.Map
+            Single 5-level binary map with the coronal hole extraction, where each level represents a different threshold value.
+        properties : dict
+            A dictionary containing the calculate coronal hole properties.
+        __version__ : str
+            Version number of pyCATCH
+        
+    Parameters
+    ----------
+    dir : str, optional
+        Directory for storing and loading data (default is the home directory).
+    save_dir : str, optional
+        Directory for storing data (default is the home directory).
+    map_file : str, optional
+        Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map() (default: None).
+    magnetogram_file : str, optional
+        Filepath to magnetogram, needs to be loadable with sunpy.map.Map() (default: None).
+    load : str, optional
+        Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords (default: None).
+    
+    Returns 
+    -------
+    None
+    """
     __version__ = __version__
     
     def __init__(self, load=None, **kwargs):
         """
-        Initialize pycatch object.
-        --------
+        Initialize a pyCATCH object.
+        
         Parameters
         ----------
-        **kwargs : 
-            dir: directory for storing and loading data (Default is the home directory)
-            save_dir: directory for storing data (Default is the home directory)
-            map_file: filepath to EUV/Intensity map, needs to be loadable with sunpy.map.map() (Default: None)
-            magnetogram_file: filepath to magnetogram, needs to be loadable with sunpy.map.map() (Default: None)
-            load: loads previously saved pycatch object from path, overrides any other keywords (Default: None)
-            
+            dir : str, optional
+                Directory for storing and loading data (default is the home directory).
+            save_dir : str, optional
+                Directory for storing data (default is the home directory).
+            map_file : str, optional
+                Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map() (default: None).
+            magnetogram_file : str, optional
+                Filepath to magnetogram, needs to be loadable with sunpy.map.Map() (default: None).
+            load : str, optional
+                Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords (default: None).
+        
         Returns 
         -------
         None
-
         """
+
         self.dir                = kwargs['dir'] if 'dir' in kwargs else str(pathlib.Path.home())
         self.save_dir           = kwargs['save_dir'] if 'save_dir' in kwargs else pathlib.Path.home()
         self.map_file           = kwargs['map_file'] if 'map_file' in kwargs else None
@@ -88,20 +145,22 @@ class pycatch:
     # save pycatch in pickle file
     def save(self, file=None, overwrite = False, no_original=True):
         """
-        Save pycatch object in a pickle file.
-        --------
+        Save a pyCATCH object to a pickle file.
+        
         Parameters
         ----------
-        **kwargs : 
-            file: filepath to save, default is pycatch.dir (Default: False)
-            overwrite: overwrites file (Default: False)
-            no_original: does not save the original map to save disk space (Default: True)
-            
+            file : str, optional
+                Filepath to save the object, default is pycatch.dir (default: False).
+            overwrite : bool, optional
+                Flag to overwrite the file if it already exists (default: False).
+            no_original : bool, optional
+                Flag to exclude saving the original map to save disk space (default: True).
+        
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             print('> pycatch ## OBJECT NOT SAVED ##')
@@ -140,20 +199,22 @@ class pycatch:
     # Download data using sunpy FIDO
     def download(self, time,instr='AIA', wave=193, **kwargs): #Fido.search **kwargs
         """
-        Download EUV map using VSO.
-        --------
+        Download an EUV map using VSO (Virtual Solar Observatory).
+        
         Parameters
         ----------
-        **kwargs : 
-            wave: set instrument (Default: 'AIA')
-            wave: set wavelength of EUV image (Default: 193)
-            takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
-            
+            instrument : str, optional
+                The instrument of the EUV image to download (default: 'AIA').
+            wavelength : int, optional
+                The wavelength of the EUV image to download (default: 193).
+           **kwargs** : 
+                Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
+        
         Returns 
         -------
         None
-
         """
+
         t=sunpy.time.parse_time(time)
         # jsoc not working !!
         # email = 'test@gmail.com',
@@ -180,20 +241,20 @@ class pycatch:
     
     def download_magnetogram(self, cadence=45, **kwargs): #Fido.search **kwargs
         """
-        Download magnetogram matching the EUV date using VSO.
-        --------
+        Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory).
+        
         Parameters
         ----------
-        **kwargs : 
-            cadence: download LOS magnetogram with _<cadence>s (Default: 45)
-            takes all sunpy.Fido.search **kwargs (see sunpy documentation for more informations)
-            
+            cadence : int, optional
+                Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds (default: 45).
+           **kwargs**: 
+                Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
+        
         Returns 
         -------
         None
-
         """
-        
+
         if 'SDO' in self.type and self.map is not None:
             t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
              
@@ -229,18 +290,19 @@ class pycatch:
     def load(self, mag=False, file = None):
         """
         Load maps.
-        --------
+        
         Parameters
         ----------
-        **kwargs : 
-            mag: load magnetogram (Default: False)
-            file: filepath to load, if not set loads pycatch.map_file or pycatch.magnetogram_file (Default: False)
-            
+            mag : bool, optional
+                Flag to load a magnetogram (default: False).
+            file : str, optional
+                Filepath to load a specific map. If not set, it loads pycatch.map_file or pycatch.magnetogram_file (default: None).
+        
         Returns 
         -------
         None
-
         """
+
         if mag:
             if file is not None:
                 self.magnetogram_file = file
@@ -258,33 +320,40 @@ class pycatch:
     def calibration(self,**kwargs):
         """
         Calibrate the intensity image.
-        --------
+        
         Parameters
         ----------
-        **kwargs : 
-            SDO/AIA:
-            deconvolve: use PSF deconvolution (Default: False, takes custom PSF as input, Default: standard AIA-PSF)   
-            register: co-registering the map (Default: True)
-            normalize: Normalize intensity to 1s (Default: True)
-            degradation: correct instrument degredation (Default: True)
-            alc: Annulus Limb Correction, Python implementation from Verbeek et al. (2014): (Default: True)
-            cut_limb: Set off-limb pixel to nan (Default: True)
+           **kwargs**(SDO/AIA): 
+                deconvolve : bool or numpy.ndarray, optional
+                    Use PSF deconvolution (default: None, takes a custom PSF array as input, if True uses aiapy.psf.deconvolve).
+                register : bool, optional
+                    Co-register the map (default: True).
+                normalize : bool, optional
+                    Normalize intensity to 1s (default: True).
+                degradation : bool, optional
+                    Correct instrument degradation (default: True).
+                alc : bool, optional
+                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014) (default: True).
+                cut_limb : bool, optional
+                    Set off-limb pixel values to NaN (default: True).
             
-            STEREO/SECCHI:
-            deconvolve: NOT YET IMPLEMENTED FOR STEREO    
-            register: co-registering the map (Default: True)
-            normalize: Normalize intensity to 1s (Default: True)
-            alc: Annulus Limb Correction, Python implementation from Verbeek et al. (2014): (Default: True)
-            cut_limb: Set off-limb pixel to nan (Default: True)    
-            
-            SOHO/EUVI:
-            NOT YET IMPLEMENTED
-            
+           **kwargs**(STEREO/SECCHI):
+                deconvolve : bool, optional
+                    NOT YET IMPLEMENTED FOR STEREO.
+                register : bool, optional
+                    Co-register the map (default: True).
+                normalize : bool, optional
+                    Normalize intensity to 1s (default: True).
+                alc : bool, optional
+                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014) (default: True).
+                cut_limb : bool, optional
+                    Set off-limb pixel values to NaN (default: True).
+        
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -303,23 +372,22 @@ class pycatch:
     def calibration_mag(self,**kwargs):
         """
         Calibrate the magnetogram.
-        --------
+        
         Parameters
         ----------
-        **kwargs : 
-            SDO/AIA:
-            rotate: rotate map to North == up (Default: True)
-            align: align with aia map (Default: True)
-            cut_limb: Set off-limb pixel to nan (Default: True)  
-            
-            SOHO/EUVI:
-            NOT YET IMPLEMENTED
-            
+           **kwargs**(SDO/HMI): 
+                rotate : bool, optional
+                    Rotate the map so that North is up (default: True).
+                align : bool, optional
+                    Align with an AIA map (default: True).
+                cut_limb : bool, optional
+                    Set off-limb pixel values to NaN (default: True).
+
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -328,26 +396,28 @@ class pycatch:
         return
     
     # make submap
-    def cutout(self,top=[1100,1100], bot=[-1100,-1100]):
+    def cutout(self,top=(1100,1100), bot=(-1100,-1100)):
         """
-        Cut a subfield of the map (if a magnetogram is loaded it will also be cut.)
-        --------
+        Cut a subfield of the map (if a magnetogram is loaded, it will also be cut).
+        
         Parameters
         ----------
-        **kwargs : 
-            top: coordinates of top right corner (Default: [1100,1100])
-            bot: coordinates of bottom left corner (Default: [-1100,-1100])
-            
+            top : tuple, optional
+                Coordinates of the top-right corner (default: (1100, 1100)).
+            bot : tuple, optional
+                Coordinates of the bottom-left corner (default: (-1100, -1100)).
+        
         Returns 
         -------
         None
-
         """
+
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
           
-        self.map=ext.cutout(self.map,top,bot)
+        self.map=mapping.cutout(self.map,top,bot)
         self.point, self.curves,  self.threshold = None, None, None
         self.cutout_status      = True
         
@@ -356,21 +426,22 @@ class pycatch:
         return
 
     # rebin map
-    def rebin(self,ndim=[1024,1024],**kwargs):
+    def rebin(self,ndim=(1024,1024),**kwargs):
         """
-        Rebin maps to new resolution (if a magnetogram is loaded it will also be resampled.)
-        --------
+        Rebin maps to a new resolution (if a magnetogram is loaded, it will also be resampled).
+        
         Parameters
         ----------
-        **kwargs : 
-            ndim: new dimensions of map (Default: [1024,1024])
-            takes all sunpy.map.Map.resample **kwargs (see sunpy documentation for more informations)
-            
+            ndim : tuple, optional
+                New dimensions of the map (default: (1024, 1024)).
+           **kwargs**: 
+                Additional keyword arguments passed to sunpy.map.Map.resample (see sunpy documentation for more information).
+        
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -389,18 +460,18 @@ class pycatch:
     # select seed point from EUV data
     def select(self,fsize=(10,10)):
         """
-        Select seed point from intensity map.
-        --------
+        Select a seed point from the intensity map.
+        
         Parameters
         ----------
-        **kwargs : 
-            fsize: set figure size (Default: (10,10))
-            
+            fsize : tuple, optional
+                Set the figure size (default: (10, 10)).
+        
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -412,19 +483,21 @@ class pycatch:
     # set threshold
     def set_threshold(self,threshold, median = True, no_percentage = False):
         """
-        Set coronal hole extraction threshold
-        --------
+        Set the coronal hole extraction threshold.
+        
         Parameters
         ----------
-        **kwargs : 
-            median: input is assumed to be as fraction of the median solar disk intensity (default: True)
-            no_percentage: input is given percent of the median solar disk intensity (default: False), only works in conjunction with median = True
-            
+            median : bool, optional
+                If True, the input is assumed to be a fraction of the median solar disk intensity (default: True).
+            no_percentage : bool, optional
+                If True, the input is given as a percentage of the median solar disk intensity (default: False). 
+                This only works in conjunction with median=True.
+        
         Returns 
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -444,18 +517,18 @@ class pycatch:
     # pick threshold from histogram
     def threshold_from_hist(self,fsize=(10,5)):
         """
-        Select coronal hole extraction threshold from solar disk intensity histogram.
-        --------
+        Select a threshold for coronal hole extraction from the solar disk intensity histogram.
+        
         Parameters
         ----------
-        **kwargs : 
-            fsize: set figure size (Default: (10,10))
-            
-        Returns 
+            fsize : tuple, optional
+                Set the figure size. Default is (10, 5).
+        
+        Returns
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -466,19 +539,20 @@ class pycatch:
     # pick threshold from area curves
     def threshold_from_curves(self,fsize=(10,5)):
         """
-        Select coronal hole extraction threshold from calculated area and uncertainty curves as function of intensity.
-        Curves need to be calculated first using pycatch.calculate_curves()
-        --------
+        Select a threshold for coronal hole extraction from calculated area and uncertainty curves as a function of intensity.
+        
+        Before using this function, you need to calculate the curves using `pycatch.calculate_curves()`.
+        
         Parameters
         ----------
-        **kwargs : 
-            fsize: set figure size (Default: (10,10))
-            
-        Returns 
+            fsize : tuple, optional
+                Set the figure size. Default is (10, 5).
+        
+        Returns
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -493,18 +567,18 @@ class pycatch:
     # calculate area curves
     def calculate_curves(self,verbose=True):
         """
-        Calculate area and uncertainty curves as function of intensity.
-        --------
+        Calculate area and uncertainty curves as a function of intensity.
+        
         Parameters
         ----------
-        **kwargs : 
-            verbose: display warnings (Default: True)
-            
-        Returns 
+            verbose : bool, optional
+                Display warnings. Default is True.
+        
+        Returns
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -523,18 +597,19 @@ class pycatch:
     def extract_ch(self, kernel=None):
         """
         Extract the coronal hole from the intensity map using the selected threshold and seed point.
-        Outputs list of five binary maps to pycatch.binmaps that are used for calculating the uncertainties.
-        --------
+        This function outputs a binary map to pycatch.binmap.
+
         Parameters
         ----------
-        **kwargs : 
-            kernel: size of circular kernel for morphological operations (Default: None == depending on resolution)        
-            
-        Returns 
+            kernel : int or None, optional
+                Size of the circular kernel for morphological operations. Default is None. If None, a kernel size depending on resolution will be used.
+        
+        Returns
         -------
         None
-
         """
+
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -556,19 +631,20 @@ class pycatch:
     # calculate morphological properties
     def calculate_properties(self, mag=False, align=False):
         """
-        Calculate the morphological coronal hole properties from the extracted binary maps.
-        --------
+        Calculate the morphological coronal hole properties from the extracted binary map.
+        
         Parameters
         ----------
-            **kwargs : 
-                mag: calculate magnetic properties INSTEAD (Default: False)    
-                align: calles calibration_mag to align with binary map (Default: False)
-                
-        Returns 
+            mag : bool, optional
+                Calculate magnetic properties instead. Default is False.
+            align : bool, optional
+                Call pycatch.calibration_mag() to align with binary map. Default is False.
+        
+        Returns
         -------
         None
-
         """
+
         if mag:
             if self.binmap is None:
                 print('> pycatch ## NO CORNAL HOLES EXTRACTED ##')
@@ -610,19 +686,20 @@ class pycatch:
     # save properties to txt file
     def print_properties(self,file=None, overwrite=False):
         """
-        Save properties to txt file.
-        --------
+        Save properties to a text file.
+        
         Parameters
         ----------
-        **kwargs : 
-            file: filepath to save, default is pycatch.dir (Default: False)
-            overwrite: overwrites file (Default: False)
-            
-        Returns 
+            file : str, optional
+                Filepath to save the data. Default is pycatch.dir.
+            overwrite : bool, optional
+                Flag to overwrite the file if it already exists. Default is False.
+        
+        Returns
         -------
         None
-
         """
+
         if self.properties['A'] is None:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## NO MORPHOLOGICAL PROPERTIES CALCULATED ##')
@@ -660,27 +737,36 @@ class pycatch:
     # display coronal hole
     def plot_map(self,boundary=True,uncertainty=True,original=False, cutout=None, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=True,**kwargs):
         """
-        Display coronal hole plot.
-        --------
+        Display a coronal hole plot.
+        
         Parameters
         ----------
-        **kwargs : 
-            boundary: overplot coronal hole boundary (Default: True)
-            uncertainty: show uncertainty of coronal hole boundary (Default: True)
-            original: show original image (Default: False)
-            cutout: display cutout around the extracted coronal hole (Default: None; Format: [[xbot,ybot],[xtop,ytop])
-            mag: show magnetogram instead (Default: False)
-            fsize: set figure size (Default: (10,10))
-            save: save and close figure (Default: False)
-            sfile: filepath to save image (otherwise use standard path), only in conjunction with save=True (Default: None)
-            overwrite: overwrites plot (Default: True)
-            takes all sunpy.map.Map.plot() **kwargs (see sunpy documentation for more informations)
-            
-        Returns 
+            boundary : bool, optional
+                Overplot the coronal hole boundary. Default is True.
+            uncertainty : bool, optional
+                Show the uncertainty of the coronal hole boundary. Default is True.
+            original : bool, optional
+                Show the original image. Default is False.
+            cutout : list of tuple, optional
+                Display a cutout around the extracted coronal hole. Format: [(xbot, ybot), (xtop, ytop)]. Default is None.
+            mag : bool, optional
+                Show a magnetogram instead of the coronal hole plot. Default is False.
+            fsize : tuple, optional
+                Set the figure size. Default is (10, 10).
+            save : bool, optional
+                Save and close the figure. Default is False.
+            sfile : str, optional
+                Filepath to save the image (use only in conjunction with save=True). Default is None.
+            overwrite : bool, optional
+                Overwrite the plot if it already exists. Default is True.
+           **kwargs**: keyword arguments
+                Additional keyword arguments for sunpy.map.Map.plot(). See the sunpy documentation for more information.
+        
+        Returns
         -------
         None
-
         """
+
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return

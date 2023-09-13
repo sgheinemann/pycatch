@@ -17,12 +17,45 @@ import aiapy.calibrate as cal
 
 #--------------------------------------------------------------------------------------------------
 #prep aia image
-def calibrate_aia(map, register= True, normalize = True,deconvolve = False, alc = True, degradation = True, cut_limb = True):
+def calibrate_aia(map, register= True, normalize = True,deconvolve = None, alc = True, degradation = True, cut_limb = True):
+    """
+    Calibrate and preprocess an AIA (Atmospheric Imaging Assembly) map.
+    
+    This function performs various calibration and preprocessing steps on an AIA map to prepare it for further analysis.
+    
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        The input AIA map to be calibrated and preprocessed.
+    register : bool, optional
+        Whether to perform image registration. Default is True.
+    normalize : bool, optional
+        Whether to normalize the exposure. Default is True.
+    deconvolve : bool or None or numpy.ndarray, optional
+        Whether to perform PSF deconvolution. If set to True, deconvolution with aiapy.psf.deconvolve is applied.
+        If custom PSF array is given, it uses this array instead. If set to False, it is not applied.
+    alc : bool, optional
+        Whether to perform annulus limb correction. Default is True.
+    degradation : bool, optional
+        Whether to correct for instrument degradation. Default is True.
+    cut_limb : bool, optional
+        Whether to cut the limb of the solar disk. Default is True.
+    
+    Returns
+    -------
+    sunpy.map.Map
+        A calibrated and preprocessed AIA map ready for analysis.
+    """
 
     calmap=copy.deepcopy(map)
     #deconvolve image
-    if deconvolve:
-        calmap = aiapy.psf.deconvolve(calmap)
+    if deconvolve is not None:
+        if deconvolve:
+            calmap = aiapy.psf.deconvolve(calmap)
+        if not deconvolve:
+            pass
+        else:
+            print('> pycatch ## CUSTOM PSF NOT YET IMPLEMENTED ##')    
         
     #register map
     if register:
@@ -56,7 +89,34 @@ def calibrate_aia(map, register= True, normalize = True,deconvolve = False, alc 
 
 #--------------------------------------------------------------------------------------------------
 #prep stereo image
-def calibrate_stereo(map, register= True, normalize = True,deconvolve = False, alc = True,  cut_limb = True):
+def calibrate_stereo(map, register= True, normalize = True,deconvolve = None, alc = True,  cut_limb = True):
+    """
+    Calibrate and preprocess a STEREO EUV (Solar TErrestrial RElations Observatory) map.
+    
+    This function performs various calibration and preprocessing steps on a STEREO map to prepare it for further analysis.
+    
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        The input STEREO map to be calibrated and preprocessed.
+    register : bool, optional
+        Whether to perform map rotation to register the map. Default is True.
+    normalize : bool, optional
+        Whether to normalize the exposure. Default is True.
+    deconvolve : bool or None or numpy.ndarray, optional
+        Whether to perform PSF deconvolution. If set to True, deconvolution with aiapy.psf.deconvolve is applied.
+        If custom PSF array is given, it uses this array instead. If set to False, it is not applied.
+    alc : bool, optional
+        Whether to perform annulus limb correction. Default is True.
+    cut_limb : bool, optional
+        Set off-limb pixel values to NaN. Default is True.
+    
+    Returns
+    -------
+    sunpy.map.Map
+        A calibrated and preprocessed STEREO map ready for analysis.
+    """
+
     calmap=copy.deepcopy(map)
     
     #deconvolve image
@@ -89,9 +149,24 @@ def calibrate_stereo(map, register= True, normalize = True,deconvolve = False, a
     return calmap
 #--------------------------------------------------------------------------------------------------
 # annulus limb correction for extraction
-def annulus_limb_correction(map):   
-    # Verbeek et al. (2014): The SPoCA-suite
-    # Transferred from IDL to Python 3 by S.G. Heinemann, June 2022
+def annulus_limb_correction(map):
+    """
+    Apply annulus limb correction to a solar map.
+
+    This function performs annulus limb correction on a solar map following the method described in Verbeek et al. (2014).
+    Transferred from IDL to Python 3 by S.G. Heinemann, June 2022
+    
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        The input solar map to which the limb correction will be applied.
+
+    Returns
+    -------
+    sunpy.map.Map
+        A solar map with annulus limb correction applied.
+
+    """
     coords = all_coordinates_from_map(map)
     if map.meta['telescop'] == 'STEREO':
         rsun=map.meta['rsun']
@@ -135,6 +210,30 @@ def annulus_limb_correction(map):
 #--------------------------------------------------------------------------------------------------
 #prep hmi image
 def calibrate_hmi(map,intensity_map, rotate= True, align = True, cut_limb = True):
+    """
+    Calibrate and preprocess an HMI (Helioseismic and Magnetic Imager) map.
+
+    This function performs various calibration and preprocessing steps on an HMI map to prepare it for further analysis.
+
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        The input HMI map to be calibrated and preprocessed.
+    intensity_map : sunpy.map.Map
+        An intensity map to align the HMI map with.
+    rotate : bool, optional
+        Whether to rotate the HMI map to have north up. Default is True.
+    align : bool, optional
+        Whether to align the HMI map with an intensity map. Default is True.
+    cut_limb : bool, optional
+        Set off-limb pixel values to NaN. Default is True.
+
+    Returns
+    -------
+    sunpy.map.Map
+        A calibrated and preprocessed HMI map ready for analysis.
+    """
+    
     calmap=copy.deepcopy(map)
     
     #rotate north up

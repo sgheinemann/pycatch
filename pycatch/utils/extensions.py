@@ -2,73 +2,156 @@
 import numpy as np
 import copy
 
-import astropy.units as u
-from astropy.coordinates import SkyCoord
-
-import sunpy
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
 import scipy.interpolate
 import scipy.ndimage
 
+#--------------------------------------------------------------------------------------------------
 # initialize units and names
-
 def init_props():
-        idict             =  {'A':('Area','10^10 km^2'),                        'dA':('Area Uncertainty','10^10 km^2'),
-                              'Imean':('Mean Intensity','ct/s'),                'dImean':('Mean Intensity Uncertainty','ct/s'),
-                              'Imedian':('Median Intensity','ct/s'),            'dImedian':('Mean Intensity Uncertainty','ct/s'),
-                              'CoM':('Center of Mass (lon,lat)','°,°'),         'dCoM':('Center of Mass Uncertainty (lon,lat)','°,°'),
-                              'ex':('Extent (lon1,lon2,lat1,lat2) ','°,°,°,°'), 'dex':('Extent Uncertainty (lon1,lon2,lat1,lat2)','°,°,°,°'),
-                              'Bs':('Signed Mean Magnetic Flux Density','G'),   'dBs':('Signed Mean Magnetic Flux Density Uncertainty','G'),
-                              'Bus':('Unsigned Mean Magnetic Flux Density','G'),'dBus':('Unsigned Mean Magnetic Flux Density Uncertainty','G'),
-                              'Fs':('Signed Magnetic Flux','10^20 Mx'),         'dFs':('Signed Magnetic Flux Uncertainty','10^20 Mx'), 
-                              'Fus':('Unsigned Magnetic Flux','10^20 Mx'),      'dFus':('Unsigned Magnetic Flux Uncertainty','10^20 Mx'),                                                    
-                              'FB':('Flux Balance','%'),                        'dFB':('Flux Balance Uncertainty','%') }                                                     
+    """
+    Initialize a dictionary of properties and their units for pyCATCH.
     
-        return idict
+    Returns
+    -------
+    dict
+        A dictionary where keys are property abbreviations, and values are tuples containing the full property name and its unit.
+    """
 
+    idict             =  {'A':('Area','10^10 km^2'),                        'dA':('Area Uncertainty','10^10 km^2'),
+                          'Imean':('Mean Intensity','ct/s'),                'dImean':('Mean Intensity Uncertainty','ct/s'),
+                          'Imedian':('Median Intensity','ct/s'),            'dImedian':('Mean Intensity Uncertainty','ct/s'),
+                          'CoM':('Center of Mass (lon,lat)','°,°'),         'dCoM':('Center of Mass Uncertainty (lon,lat)','°,°'),
+                          'ex':('Extent (lon1,lon2,lat1,lat2) ','°,°,°,°'), 'dex':('Extent Uncertainty (lon1,lon2,lat1,lat2)','°,°,°,°'),
+                          'Bs':('Signed Mean Magnetic Flux Density','G'),   'dBs':('Signed Mean Magnetic Flux Density Uncertainty','G'),
+                          'Bus':('Unsigned Mean Magnetic Flux Density','G'),'dBus':('Unsigned Mean Magnetic Flux Density Uncertainty','G'),
+                          'Fs':('Signed Magnetic Flux','10^20 Mx'),         'dFs':('Signed Magnetic Flux Uncertainty','10^20 Mx'), 
+                          'Fus':('Unsigned Magnetic Flux','10^20 Mx'),      'dFus':('Unsigned Magnetic Flux Uncertainty','10^20 Mx'),                                                    
+                          'FB':('Flux Balance','%'),                        'dFB':('Flux Balance Uncertainty','%') }                                                     
+
+    return idict
+
+#--------------------------------------------------------------------------------------------------
 #print properties to txt file
 def printtxt(file, pdict,names, version):
-        with open(file, 'w') as f:
-            f.write(f'# pyCATCH v{version}\n')
-            
-            f.write('#') 
-            for key,value in names.items():
-                f.write(f'{value[0]} ; ')
-            f.write('\n')
-            
-            f.write('#') 
-            for key,value in names.items():
-                f.write(f'{value[1]} ; ')
-            f.write('\n')    
-            
-            for key,value in pdict.items():
-                f.write(f'{value} ; ')
-        
-        return
+    """
+    Write property data to a text file.
+
+    This function writes property data to a text file with a specific format. It includes the version number,
+    property names, and units as headers followed by the property values.
+
+    Parameters
+    ----------
+    file : str
+        The filepath to the output text file.
+    pdict : dict
+        A dictionary containing property data, where keys correspond to property abbreviations.
+    names : dict
+        A dictionary mapping property abbreviations to tuples containing full property names and units.
+    version : str
+        The version number of the pyCATCH software.
+
+    Returns
+    -------
+    None
+
+    """
     
+    with open(file, 'w') as f:
+        f.write(f'# pyCATCH v{version}\n')
+        
+        f.write('#') 
+        for key,value in names.items():
+            f.write(f'{value[0]} ; ')
+        f.write('\n')
+        
+        f.write('#') 
+        for key,value in names.items():
+            f.write(f'{value[1]} ; ')
+        f.write('\n')    
+        
+        for key,value in pdict.items():
+            f.write(f'{value} ; ')
+    
+    return
+ 
+#--------------------------------------------------------------------------------------------------   
 # median from disk
 def median_disk(map):
-        hpc_coords=all_coordinates_from_map(map)
-        mask=coordinate_is_on_solar_disk(hpc_coords)
-        data=np.where(mask == True, map.data, np.nan)
-        return np.nanmedian(data)
+    """
+    Calculate the median value within the solar disk region of a map.
 
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        The input solar map.
+
+    Returns
+    -------
+    float
+        The median value of the data within the solar disk.
+
+    """
+    
+    hpc_coords=all_coordinates_from_map(map)
+    mask=coordinate_is_on_solar_disk(hpc_coords)
+    data=np.where(mask == True, map.data, np.nan)
+    return np.nanmedian(data)
+
+#--------------------------------------------------------------------------------------------------
 # find nearest index
 def find_nearest(array, value):
+    """
+    Find the index of the nearest value in an array to a specified value.
+    
+    Parameters
+    ----------
+    array : array-like
+        The input array in which to find the nearest value.
+    value : float
+        The value to which the nearest element in the array is sought.
+    
+    Returns
+    -------
+    int
+        The index of the nearest value in the array.
+
+    """
+
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
 
-# make map cutout
-def cutout(map,top,bot):
-    cmap=copy.deepcopy(map)
-    topc=SkyCoord(top[0]*u.arcsec,top[1]*u.arcsec, frame=cmap.coordinate_frame)
-    botc=SkyCoord(bot[0]*u.arcsec,bot[1]*u.arcsec, frame=cmap.coordinate_frame)
-    return cmap.submap(botc,top_right=topc)
 
+#--------------------------------------------------------------------------------------------------
 #rebin function
 def congrid(a, newdims, method='linear', centre=False, minusone=False):
+    """
+    Resample an array to new dimension sizes using various interpolation methods.
+    
+    Parameters
+    ----------
+    a : array-like
+        The input array to be resampled.
+    newdims : tuple
+        The new dimensions to which the array should be resampled.
+    method : str, optional
+        The interpolation method to use. Default is 'linear'.
+    centre : bool, optional
+        Whether interpolation points are at the centers of the bins. Default is False.
+    minusone : bool, optional
+        Whether to prevent extrapolation one element beyond the bounds of the input array. Default is False.
+    
+    Returns
+    -------
+    array-like
+        The resampled array with the specified dimensions and interpolation method applied.
+    
+    Notes
+    -----
+    This function is adapted from IDL's `congrid` routine.
+
     '''Arbitrary resampling of source array to new dimension sizes.
     Currently only supports maintaining the same number of dimensions.
     To use 1-D arrays, first promote them to shape (x,1).
@@ -93,7 +176,7 @@ def congrid(a, newdims, method='linear', centre=False, minusone=False):
     False - inarray is resampled by factors of (i/x) * (j/y)
     True - inarray is resampled by(i-1)/(x-1) * (j-1)/(y-1)
     This prevents extrapolation one element beyond bounds of input array.
-    '''
+    """
     if not a.dtype in [np.float64, np.float32]:
         a = np.cast[float](a)
     

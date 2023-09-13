@@ -1,0 +1,16 @@
+pycatch Module
+==============
+
+.. automodule:: pycatch
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pycatch Class
+------------
+
+.. autoclass:: pycatch.pycatch
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

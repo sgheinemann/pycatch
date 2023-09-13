@@ -10,8 +10,10 @@ from setuptools import setup, find_packages
 import pathlib
 
 
+version = {}
+with open("_version.py") as version_file:
+    exec(version_file.read(), version)
 
-exec(open('pycatch/_version.py').read())
 DESCRIPTION = 'Collection of Analysis Tools for Coronal Holes'
 here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
@@ -22,7 +24,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 setup(
        # the name must match the folder name 'verysimplemodule'
         name="pycatch", 
-        version=__version__,
+        version=version['__version__'],
         author="Stephan G. Heinemann",
         author_email="stephan.heinemann@hmail.at",
         description=DESCRIPTION,
