@@ -1,5 +1,5 @@
-pycatch.utils Package Documentation
-======================================
+pycatch.utils
+=============
 
 The `utils` package contains utility submodules.
 

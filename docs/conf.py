@@ -19,6 +19,11 @@ author = 'Stephan G. Heinemann'
 
 extensions = ['sphinx.ext.autodoc']
 
+autodoc_mock_imports = ['../pycatch']
+
+# Include the module and class in your documentation
+autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
+
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 

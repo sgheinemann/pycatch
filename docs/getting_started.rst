@@ -5,12 +5,16 @@ This section provides a quick introduction to using pyCATCH.
 
 pyCATCH essentially consists only of the class object pycatch that inclused inbuilt methods for detection and extraction of coronal holes.
 
+It uses a lot of sunpy <https://sunpy.org/> functionalites, thus for advanced usage of pyCATCH, it is suggested to make yourself familiar with it.
+
 Reading the documentation
 -------------------------
 
 You can read the documentation by opening the
 ::
-   doc/_build/index.html
+	
+	doc/_build/index.html
+	
 file.
 
 Installing pyCATCH
@@ -19,11 +23,25 @@ Installing pyCATCH
 For v0.1:
 Download or pull pyCATCH repository from GitHub
 ::
+
 	https://github.com/sgheinemann/pycatch
 	
 Navigate to the directory and install pyCATCH using pip
 ::
+
 	pip install .
+
+pyCATCH uses the following packages:
+
+	* astropy
+	* joblib
+	* matplotlib
+	* numexpr
+	* numpy
+	* opencv-python
+	* sunpy
+	* reproject
+	* scipy
 
 
 Initializing pyCATCH
@@ -31,70 +49,174 @@ Initializing pyCATCH
 
 Import the pycatch class with
 ::
+	
 	from pycatch.pycatch import pycatch
 	
 then you can initilize the class
 ::
+	
 	ch = pycatch()
 	
 	
 Dowloading data
----------------
+-------------------
 
-note 720s	
+EUV data can be downloaded with
+::
+	
+	ch.download('DATE') 
+
+and respectively magnetograms, if a EUV map is already loaded
+::
+	
+	ch.download_magnetogram()
+
 	
 Loading data
------------------------------
+------------
 
-EUV images and 
+EUV images and magnetograms can be loaded into the pyCATCH class by
+::
+	
+	ch.load(file='PATH')
+	ch.load(file='PATH', mag = True )
+
+If data was downloaded with the same instance of the pyCATCH class, the path to the downloaded data is stored in the class and the load method can be called without providing the path.
 
 	
 Calibrating data
 ----------------
 
-EUV images and 
+Prepare the date for coronal hole extraction
+::
+	
+	ch.calibration()
+	ch.calibration_mag()
+	
+The data can rebinned and cutout if desired
+::
+	
+	ch.rebin(ndim=(nx,ny))
+	ch.cutout(top=(x_max,y_max), bot=(x_min,y_min))
 
 
 Selecting coronal hole seed point
 ---------------------------------
 
-EUV images and 
+Select a seed point from an interactive window from where the coronal hole will be grown
+::
+	
+	ch.select(hint=True)
+
+Flag hint to highlight dark regions (possible but not necessarily all coronal hole).
 
 	
 Setting a threshold
 -------------------
 
-EUV images and 
+pyCATCH features four different options to select a threshold.
 
+
+	* Set the threshold manually
+	  ::
+	    	
+		ch.set_threshold(Threshold)
+
+	* Use the threshold derived from CATCH statistics (Heinemann et al. 2019)
+	  ::
+		
+		ch.suggest_threshold()
+
+	  It is advised to use this option to get a starting suggestion and then adjust the threshold as needed.
+    
+	* Select the threshold from solar disk intensity distribution
+	  ::
+		
+		ch.threshold_from_hist()
+    
+	* Calculate the coronal hole area and uncertainty as function of intensity and select the boundary to be where the uncertainty is lowest.
+	  ::
+		
+		ch.calculate_curves() 
+		ch.threshold_from_curves()
+
+	  Warning: This is an advance option and can be slow with high resolution.
 
 Extracting the coronal hole
 ---------------------------
 
-EUV images and 
+The coronal hole can be extracted from the selected seed point and the set threshold
+::
+	
+	ch.extract_ch()
 
 	
 Calculating coronal hole properties
 -----------------------------------
 
-EUV images and 
+The coronal hole's morphological properties can be calculated with
+::
+	
+	ch.calculate_properties()
+
+and the magnetic properties can be calculated with
+::
+	
+	ch.calculate_properties(mag=True)
 
 
 Plotting and saving coronal hole extractions
 --------------------------------------------
 
-EUV images and 
-
+The intensity map with the coronal hole boundary and uncertainties overlaid can be displayed with
+::
 	
-Saving and loading pyCATCH sessions
------------------------------------
+	ch.plot_map()
+	
+Set the 'mag' flag to display the magnetogram instead
+::
+	
+	ch.plot_map(mag=True)
 
-EUV images and 
+Set the 'save' flag to save the images to PDF
+::
+	
+	ch.plot_map(save=True)
+	ch.plot_map(mag=True,save=True)
+	
+The properties of the extracted coronal hole can be saved in a text file with
+::
+	
+	ch.print_properties()
+
+And the extracted coronal hole 'binary' map can be saved as a fits file with 
+::
+	
+	ch.bin2fits()
+	
+	
+Saving and loading pyCATCH session
+----------------------------------
+
+A pyCATCH object can be save to a pickle file
+::
+	
+	ch.save()
+
+and restored with
+::
+	
+	ch_loaded = pycatch(restore='PATH')
+
 
 	
 Example
 -------
 
-EUV images and 
+Example python scripts can be found in the directory
+::
+	
+	examples/
 
 	
 	

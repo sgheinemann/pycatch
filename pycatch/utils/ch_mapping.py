@@ -17,7 +17,7 @@ from sunpy.coordinates import frames
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
 
-from cv2 import morphologyEx as morph
+from cv2 import morphologyEx
 from cv2 import MORPH_OPEN,MORPH_CLOSE
 import cv2
 
@@ -184,7 +184,6 @@ def extract_ch(map,thr, kernel, seed):
     -------
     sunpy.map.Map
         A "binary" map containing the extracted coronal hole region.
-
     """    
     if kernel is None:
         indx= ext.find_nearest((np.arange(5)+1)*0.6, map.meta['cdelt1'])
@@ -194,8 +193,8 @@ def extract_ch(map,thr, kernel, seed):
     data=np.where(map.data < thr, 1, 0)
     data=data.astype(np.float32)
     kern=make_circle(kernel)
-    data=morph(data,MORPH_CLOSE,kern)
-    data=morph(data,MORPH_OPEN,kern)
+    data=morphologyEx(data,MORPH_CLOSE,kern)
+    data=morphologyEx(data,MORPH_OPEN,kern)
     cont,hier=cv2.findContours(image=data.astype('uint8'), mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
     
     bindata=np.zeros((data.shape))

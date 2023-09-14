@@ -19,6 +19,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Changelog" href="../../changelog.html" />
     <link rel="prev" title="pycatch.utils.extensions Module" href="extensions.html" /> 
 </head>
 
@@ -43,10 +44,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">pycatch Package Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../pycatch.html">pycatch.pycatch Class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#pycatch-utils-package">pycatch.utils Package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="index.html">pycatch.utils Package Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with pyCATCH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">pyCATCH</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pycatch.html">pycatch.pycatch</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">pycatch.utils</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="calibration.html">pycatch.utils.calibration Module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ch_mapping.html">pycatch.utils.ch_mapping Module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extensions.html">pycatch.utils.extensions Module</a></li>
@@ -62,6 +63,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -78,8 +80,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">pycatch Package Documentation</a></li>
-          <li class="breadcrumb-item"><a href="index.html">pycatch.utils Package Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyCATCH</a></li>
+          <li class="breadcrumb-item"><a href="index.html">pycatch.utils</a></li>
       <li class="breadcrumb-item active">pycatch.utils.plot Module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/pycatch/utils/plot.rst.txt" rel="nofollow"> View page source</a>
@@ -98,8 +100,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycatch.utils.plot.</span></span><span class="sig-name descname"><span class="pre">SnappingCursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['y']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ye</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A cross-hair cursor that snaps to the data point of a line, which is
-closest to the <em>x</em> position of the cursor.</p>
-<p>For simplicity, this assumes that <em>x</em> values of the data are sorted.</p>
+closest to the x position of the cursor.</p>
+<p>For simplicity, this assumes that x values of the data are sorted.</p>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
 <dl class="simple">
@@ -136,42 +138,12 @@ closest to the <em>x</em> position of the cursor.</p>
 <dt>on_draw(event)</dt><dd><p>Handles drawing events to update the cursor’s background.</p>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.create_new_background">
-<span class="sig-name descname"><span class="pre">create_new_background</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.create_new_background" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.on_draw">
-<span class="sig-name descname"><span class="pre">on_draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.on_draw" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.on_mouse_click">
-<span class="sig-name descname"><span class="pre">on_mouse_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.on_mouse_click" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.on_mouse_move">
-<span class="sig-name descname"><span class="pre">on_mouse_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.on_mouse_move" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.set_cross_hair_visible">
-<span class="sig-name descname"><span class="pre">set_cross_hair_visible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visible</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.set_cross_hair_visible" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pycatch.utils.plot.SnappingCursor.update_background">
-<span class="sig-name descname"><span class="pre">update_background</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.SnappingCursor.update_background" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
 </section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pycatch.utils.plot.get_point_from_map">
-<span class="sig-prename descclassname"><span class="pre">pycatch.utils.plot.</span></span><span class="sig-name descname"><span class="pre">get_point_from_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.get_point_from_map" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.plot.</span></span><span class="sig-name descname"><span class="pre">get_point_from_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.plot.get_point_from_map" title="Permalink to this definition"></a></dt>
 <dd><p>Display a solar map and allow the user to interactively select a point on the map.</p>
 <section id="id1">
 <h2>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
@@ -277,6 +249,7 @@ the x-axis data, <cite>curves[1]</cite> is the y-axis data for the first curve, 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="extensions.html" class="btn btn-neutral float-left" title="pycatch.utils.extensions Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -44,15 +44,16 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">pycatch Package Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../pycatch.html">pycatch.pycatch Class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#pycatch-utils-package">pycatch.utils Package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="index.html">pycatch.utils Package Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with pyCATCH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">pyCATCH</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pycatch.html">pycatch.pycatch</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">pycatch.utils</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="calibration.html">pycatch.utils.calibration Module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ch_mapping.html">pycatch.utils.ch_mapping Module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">pycatch.utils.extensions Module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.congrid"><code class="docutils literal notranslate"><span class="pre">congrid()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.find_nearest"><code class="docutils literal notranslate"><span class="pre">find_nearest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.get_extent"><code class="docutils literal notranslate"><span class="pre">get_extent()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.init_props"><code class="docutils literal notranslate"><span class="pre">init_props()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.median_disk"><code class="docutils literal notranslate"><span class="pre">median_disk()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pycatch.utils.extensions.printtxt"><code class="docutils literal notranslate"><span class="pre">printtxt()</span></code></a></li>
@@ -63,6 +64,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -79,8 +81,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">pycatch Package Documentation</a></li>
-          <li class="breadcrumb-item"><a href="index.html">pycatch.utils Package Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyCATCH</a></li>
+          <li class="breadcrumb-item"><a href="index.html">pycatch.utils</a></li>
       <li class="breadcrumb-item active">pycatch.utils.extensions Module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/pycatch/utils/extensions.rst.txt" rel="nofollow"> View page source</a>
@@ -122,20 +124,12 @@
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
-<p>This function is adapted from IDL’s <cite>congrid</cite> routine.</p>
-<p>‘’’Arbitrary resampling of source array to new dimension sizes.
-Currently only supports maintaining the same number of dimensions.
-To use 1-D arrays, first promote them to shape (x,1).</p>
-<p>Uses the same parameters and creates the same co-ordinate lookup points
-as IDL’’s congrid routine, which apparently originally came from a VAX/VMS
-routine of the same name.</p>
+<p>This function is adapted from IDL’s <cite>congrid</cite> routine.
+Arbitrary resampling of source array to new dimension sizes. Currently only supports maintaining the same number of dimensions. To use 1-D arrays, first promote them to shape (x,1).
+Uses the same parameters and creates the same co-ordinate lookup points as IDL’’s congrid routine, which apparently originally came from a VAX/VMS routine of the same name.</p>
 <p>method:
 neighbour - closest value from original data
-nearest and linear - uses n x 1-D interpolations using</p>
-<blockquote>
-<div><p>scipy.interpolate.interp1d</p>
-</div></blockquote>
-<p>(see Numerical Recipes for validity of use of n 1-D interpolations)
+nearest and linear - uses n x 1-D interpolations using scipy.interpolate.interp1d (see Numerical Recipes for validity of use of n 1-D interpolations)
 spline - uses ndimage.map_coordinates</p>
 <p>centre:
 True - interpolation points are at the centres of the bins
@@ -171,11 +165,34 @@ This prevents extrapolation one element beyond bounds of input array.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pycatch.utils.extensions.get_extent">
+<span class="sig-prename descclassname"><span class="pre">pycatch.utils.extensions.</span></span><span class="sig-name descname"><span class="pre">get_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.extensions.get_extent" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the extent of a coronal hole in Helioprojective Cartesian (HPC) coordinates.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>A SunPy map object for which the extent needs to be calculated.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing two tuples representing the lower-left and upper-right corners of the map’s extent in HPC coordinates.
+The format of the outer tuple is ((x_min, y_min), (x_max, y_max)), where:
+(x_min, y_min) represents the HPC coordinates of the lower-left corner.
+(x_max, y_max) represents the HPC coordinates of the upper-right corner.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pycatch.utils.extensions.init_props">
 <span class="sig-prename descclassname"><span class="pre">pycatch.utils.extensions.</span></span><span class="sig-name descname"><span class="pre">init_props</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.extensions.init_props" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize a dictionary of properties and their units for pyCATCH.</p>
-<section id="id3">
-<h2>Returns<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<section id="id5">
+<h2>Returns<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>dict</dt><dd><p>A dictionary where keys are property abbreviations, and values are tuples containing the full property name and its unit.</p>
 </dd>
@@ -187,15 +204,15 @@ This prevents extrapolation one element beyond bounds of input array.</p>
 <dt class="sig sig-object py" id="pycatch.utils.extensions.median_disk">
 <span class="sig-prename descclassname"><span class="pre">pycatch.utils.extensions.</span></span><span class="sig-name descname"><span class="pre">median_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.utils.extensions.median_disk" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the median value within the solar disk region of a map.</p>
-<section id="id4">
-<h2>Parameters<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<section id="id6">
+<h2>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The input solar map.</p>
 </dd>
 </dl>
 </section>
-<section id="id5">
-<h2>Returns<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<section id="id7">
+<h2>Returns<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>float</dt><dd><p>The median value of the data within the solar disk.</p>
 </dd>
@@ -209,8 +226,8 @@ This prevents extrapolation one element beyond bounds of input array.</p>
 <dd><p>Write property data to a text file.</p>
 <p>This function writes property data to a text file with a specific format. It includes the version number,
 property names, and units as headers followed by the property values.</p>
-<section id="id6">
-<h2>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<section id="id8">
+<h2>Parameters<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>file<span class="classifier">str</span></dt><dd><p>The filepath to the output text file.</p>
 </dd>
@@ -222,8 +239,8 @@ property names, and units as headers followed by the property values.</p>
 </dd>
 </dl>
 </section>
-<section id="id7">
-<h2>Returns<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<section id="id9">
+<h2>Returns<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
 <p>None</p>
 </section>
 </dd></dl>

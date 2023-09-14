@@ -1,29 +1,16 @@
-pycatch Package Documentation
-================================
-
-pycatch.pycatch Package
-------------------------
-
-The `pycatch` package contains the pyCATCH class.
+pyCATCH
+=======
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Class:
-
+   :maxdepth: 2
+   :caption: pycatch.pycatch:
+      
    pycatch
 
-pycatch.utils Package
-------------------------
-
-The `utils` package contains utility submodules.
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Submodules:
+   :maxdepth: 3
+   :caption: pycatch.utils:
 
    utils/index
-   utils/calibration
-   utils/ch_mapping
-   utils/extensions
-   utils/plot
 

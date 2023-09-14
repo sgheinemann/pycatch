@@ -1,4 +1,3 @@
-
 import numpy as np
 import copy
 
@@ -55,7 +54,6 @@ def printtxt(file, pdict,names, version):
     Returns
     -------
     None
-
     """
     
     with open(file, 'w') as f:
@@ -72,7 +70,7 @@ def printtxt(file, pdict,names, version):
         f.write('\n')    
         
         for key,value in pdict.items():
-            f.write(f'{value} ; ')
+            f.write(f'{value:.2f} ; ')
     
     return
  
@@ -91,7 +89,6 @@ def median_disk(map):
     -------
     float
         The median value of the data within the solar disk.
-
     """
     
     hpc_coords=all_coordinates_from_map(map)
@@ -102,10 +99,27 @@ def median_disk(map):
 #--------------------------------------------------------------------------------------------------   
 # get extent
 def get_extent(map):
+    """
+    Calculate the extent of a coronal hole in Helioprojective Cartesian (HPC) coordinates.
+    
+    Parameters
+    ----------
+    map : sunpy.map.Map
+        A SunPy map object for which the extent needs to be calculated.
+    
+    Returns
+    -------
+    tuple
+        A tuple containing two tuples representing the lower-left and upper-right corners of the map's extent in HPC coordinates.
+        The format of the outer tuple is ((x_min, y_min), (x_max, y_max)), where:
+        (x_min, y_min) represents the HPC coordinates of the lower-left corner.
+        (x_max, y_max) represents the HPC coordinates of the upper-right corner.
+    """
     hpc_coords=all_coordinates_from_map(map)
-    mask=1
-    bot, top = 1,1
-    return bot, top
+    mask=map.data > 0
+    tx=mask*hpc_coords.Tx.value
+    ty=mask*hpc_coords.Ty.value
+    return (np.nanmin(tx.min),np.nanmin(ty)), (np.nanmin(tx),np.nanmin(ty))
     
 #--------------------------------------------------------------------------------------------------
 # find nearest index
@@ -124,7 +138,6 @@ def find_nearest(array, value):
     -------
     int
         The index of the nearest value in the array.
-
     """
 
     array = np.asarray(array)
@@ -159,20 +172,12 @@ def congrid(a, newdims, method='linear', centre=False, minusone=False):
     Notes
     -----
     This function is adapted from IDL's `congrid` routine.
-
-    '''Arbitrary resampling of source array to new dimension sizes.
-    Currently only supports maintaining the same number of dimensions.
-    To use 1-D arrays, first promote them to shape (x,1).
-    
-    Uses the same parameters and creates the same co-ordinate lookup points
-    as IDL''s congrid routine, which apparently originally came from a VAX/VMS
-    routine of the same name.
+    Arbitrary resampling of source array to new dimension sizes. Currently only supports maintaining the same number of dimensions. To use 1-D arrays, first promote them to shape (x,1).
+    Uses the same parameters and creates the same co-ordinate lookup points as IDL''s congrid routine, which apparently originally came from a VAX/VMS routine of the same name.
 
     method:
     neighbour - closest value from original data
-    nearest and linear - uses n x 1-D interpolations using
-                         scipy.interpolate.interp1d
-    (see Numerical Recipes for validity of use of n 1-D interpolations)
+    nearest and linear - uses n x 1-D interpolations using scipy.interpolate.interp1d (see Numerical Recipes for validity of use of n 1-D interpolations)
     spline - uses ndimage.map_coordinates
 
     centre:

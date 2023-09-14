@@ -5,6 +5,5 @@ The `ch_mapping` module provides map operation functions.
 
 .. automodule:: pycatch.utils.ch_mapping
    :members:
-   :undoc-members:
    :show-inheritance:
 

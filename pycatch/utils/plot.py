@@ -34,9 +34,9 @@ mpl.rcParams['xtick.minor.width']=   2     # minor tick width in points
 class SnappingCursor:
     """
     A cross-hair cursor that snaps to the data point of a line, which is
-    closest to the *x* position of the cursor.
+    closest to the x position of the cursor.
 
-    For simplicity, this assumes that *x* values of the data are sorted.
+    For simplicity, this assumes that x values of the data are sorted.
 
     Parameters
     ----------
@@ -68,7 +68,6 @@ class SnappingCursor:
         Handles mouse movement to snap the cursor to the nearest data point.
     on_draw(event)
         Handles drawing events to update the cursor's background.
-
     """
     def __init__(self,fig, ax, line, line2=None, names=['y'],xe=None,ye=None):
         self.ax = ax

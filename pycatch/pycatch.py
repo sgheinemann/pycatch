@@ -66,48 +66,84 @@ class pycatch:
     Parameters
     ----------
     dir : str, optional
-        Directory for storing and loading data (default is the home directory).
+        Directory for storing and loading data. Default is the home directory.
     save_dir : str, optional
-        Directory for storing data (default is the home directory).
+        Directory for storing data. Default is the home directory.
     map_file : str, optional
-        Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map() (default: None).
+        Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map(). Default is None.
     magnetogram_file : str, optional
-        Filepath to magnetogram, needs to be loadable with sunpy.map.Map() (default: None).
+        Filepath to magnetogram, needs to be loadable with sunpy.map.Map(). Default is None.
     load : str, optional
-        Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords (default: None).
+        Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords. Default is None.
     
     Returns 
     -------
     None
     """
+    
     __version__ = __version__
     
-    def __init__(self, load=None, **kwargs):
+#############################################################################################################################################    
+
+    def __str__(self):
+        if self.map is not None:
+            datestr=self.map.meta['DATE-OBS']
+        else:
+            datestr=None
+        return f'pyCATCH v{self.__version__} ({self.type},{datestr})'
+    
+ #############################################################################################################################################      
+ 
+    def __init__(self, restore=None, **kwargs):
         """
         Initialize a pyCATCH object.
         
         Parameters
         ----------
             dir : str, optional
-                Directory for storing and loading data (default is the home directory).
+                Directory for storing and loading data. Default is the home directory.
             save_dir : str, optional
-                Directory for storing data (default is the home directory).
+                Directory for storing data. Default is the home directory.
             map_file : str, optional
-                Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map() (default: None).
+                Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map(). Default is None.
             magnetogram_file : str, optional
-                Filepath to magnetogram, needs to be loadable with sunpy.map.Map() (default: None).
-            load : str, optional
-                Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords (default: None).
+                Filepath to magnetogram, needs to be loadable with sunpy.map.Map(). Default is None.
+            restore : str, optional
+                Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords. Default is None.
         
         Returns 
         -------
         None
         """
+        
+        # Check the type of the 'dir' argument
+        dir_path = kwargs.get('dir', str(pathlib.Path.home()))
+        if not isinstance(dir_path, str):
+            raise TypeError("> pycatch ##  'dir' argument must be type str")
 
-        self.dir                = kwargs['dir'] if 'dir' in kwargs else str(pathlib.Path.home())
-        self.save_dir           = kwargs['save_dir'] if 'save_dir' in kwargs else pathlib.Path.home()
-        self.map_file           = kwargs['map_file'] if 'map_file' in kwargs else None
-        self.magnetogram_file   = kwargs['magnetogram_file'] if 'magnetogram_file' in kwargs else None
+        # Check the type of the 'save_dir' argument
+        save_dir_path = kwargs.get('save_dir', str(pathlib.Path.home()))
+        if not isinstance(save_dir_path, str):
+            raise TypeError("> pycatch ##  'save_dir' argument must be type str")
+
+        # Check the type of the 'map_file' argument
+        map_file_path = kwargs.get('map_file', None)
+        if map_file_path is not None and not isinstance(map_file_path, str):
+            raise TypeError("> pycatch ##  'map_file' argument must be type str or None")
+
+        # Check the type of the 'magnetogram_file' argument
+        magnetogram_file_path = kwargs.get('magnetogram_file', None)
+        if magnetogram_file_path is not None and not isinstance(magnetogram_file_path, str):
+            raise TypeError("> pycatch ##  'magnetogram_file' argument must be type str or None")
+
+        # Check the type of the 'restore' argument
+        if restore is not None and not isinstance(restore, str):
+            raise TypeError("> pycatch ##  'restore' argument must be type str or None")
+            
+        self.dir                = dir_path
+        self.save_dir           = save_dir_path
+        self.map_file           = map_file_path
+        self.magnetogram_file   = magnetogram_file_path
         
         self.map                = None
         self.original_map       = None
@@ -124,10 +160,10 @@ class pycatch:
                                     'Bs':None,'dBs':None,'Bus':None,'dBus':None,'Fs':None,'dFs':None,'Fus':None,'dFus':None,'FB':None,'dFB':None }
         self.names              =  ext.init_props()
         
-        if load is not None:
+        if restore is not None:
             
             try:
-                with open(load, "rb") as f:
+                with open(restore, "rb") as f:
                     data=pickle.load(f)
                 
                # save_dict=
@@ -141,6 +177,7 @@ class pycatch:
                 print("> pycatch ## NO DATA LOADAD ##")
                 return
  
+#############################################################################################################################################   
         
     # save pycatch in pickle file
     def save(self, file=None, overwrite = False, no_original=True):
@@ -150,16 +187,30 @@ class pycatch:
         Parameters
         ----------
             file : str, optional
-                Filepath to save the object, default is pycatch.dir (default: False).
+                Filepath to save the object, default is pycatch.dir. Default is None.
             overwrite : bool, optional
-                Flag to overwrite the file if it already exists (default: False).
+                Flag to overwrite the file if it already exists. Default is False.
             no_original : bool, optional
-                Flag to exclude saving the original map to save disk space (default: True).
+                Flag to exclude saving the original map to save disk space. Default is True.
         
         Returns 
         -------
         None
         """
+        # Check the type of the 'file' argument
+        if file is not None and not isinstance(file, str):
+            print("> pycatch ## 'file' argument must be type str")
+            return 
+        
+        # Check the type of the 'overwrite' argument
+        if not isinstance(overwrite, bool):
+            print("> pycatch ## 'overwrite' argument must be type bool")
+            return 
+        
+        # Check the type of the 'no_original' argument
+        if not isinstance(no_original, bool):
+            print("> pycatch ## 'no_original' argument must be type bool")
+            return 
 
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
@@ -195,6 +246,8 @@ class pycatch:
         except Exception as ex:
             print("> pycatch ## Error during pickling object (Possibly unsupported):", ex)
         return
+
+#############################################################################################################################################   
         
     # Download data using sunpy FIDO
     def download(self, time,instr='AIA', wave=193, **kwargs): #Fido.search **kwargs
@@ -204,10 +257,10 @@ class pycatch:
         Parameters
         ----------
             instrument : str, optional
-                The instrument of the EUV image to download (default: 'AIA').
+                The instrument of the EUV image to download. Default is 'AIA'.
             wavelength : int, optional
-                The wavelength of the EUV image to download (default: 193).
-           **kwargs** : 
+                The wavelength of the EUV image to download. Default is 193.
+            ** kwargs: 
                 Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
         
         Returns 
@@ -215,6 +268,15 @@ class pycatch:
         None
         """
 
+        if not isinstance(instr, str):
+            print("> pycatch ##  'instr' argument must be type str")
+            return
+        
+        # Check the type of the 'wave' argument
+        if not isinstance(wave, int):
+            print("> pycatch ## 'wave' argument must be type int")
+            return 
+        
         t=sunpy.time.parse_time(time)
         # jsoc not working !!
         # email = 'test@gmail.com',
@@ -238,6 +300,7 @@ class pycatch:
         
         return 
     
+#############################################################################################################################################   
     
     def download_magnetogram(self, cadence=45, **kwargs): #Fido.search **kwargs
         """
@@ -246,15 +309,20 @@ class pycatch:
         Parameters
         ----------
             cadence : int, optional
-                Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds (default: 45).
-           **kwargs**: 
+                Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.
+            ** kwargs : 
                 Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
         
         Returns 
         -------
         None
         """
-
+        
+        # Check the type of the 'cadence' argument
+        if not isinstance(cadence, int):
+            print("> pycatch ## 'wave' argument must be type int")
+            return 
+        
         if 'SDO' in self.type and self.map is not None:
             t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
              
@@ -285,7 +353,8 @@ class pycatch:
             return
         return
         
-    
+ #############################################################################################################################################   
+   
     # Load data using sunpy FIDO
     def load(self, mag=False, file = None):
         """
@@ -294,15 +363,25 @@ class pycatch:
         Parameters
         ----------
             mag : bool, optional
-                Flag to load a magnetogram (default: False).
+                Flag to load a magnetogram. Default is False.
             file : str, optional
-                Filepath to load a specific map. If not set, it loads pycatch.map_file or pycatch.magnetogram_file (default: None).
+                Filepath to load a specific map. If not set, it loads pycatch.map_file or pycatch.magnetogram_file. Default is None.
         
         Returns 
         -------
         None
         """
 
+        # Check the type of the 'file' argument
+        if file is not None and not isinstance(file, str):
+            print("> pycatch ## 'file' argument must be type str")
+            return 
+        
+        # Check the type of the 'mag' argument
+        if not isinstance(mag, bool):
+            print("> pycatch ## 'mag' argument must be type bool")
+            return 
+                
         if mag:
             if file is not None:
                 self.magnetogram_file = file
@@ -315,6 +394,7 @@ class pycatch:
             self.type=self.map.meta['telescop']
         return
         
+#############################################################################################################################################   
         
     # calibrate EUV data
     def calibration(self,**kwargs):
@@ -323,31 +403,31 @@ class pycatch:
         
         Parameters
         ----------
-           **kwargs**(SDO/AIA): 
+            ** kwargs (SDO/AIA) :
                 deconvolve : bool or numpy.ndarray, optional
-                    Use PSF deconvolution (default: None, takes a custom PSF array as input, if True uses aiapy.psf.deconvolve).
+                    Use PSF deconvolution. Default is None. It takes a custom PSF array as input, if True uses aiapy.psf.deconvolve.
                 register : bool, optional
-                    Co-register the map (default: True).
+                    Co-register the map. Default is True.
                 normalize : bool, optional
-                    Normalize intensity to 1s (default: True).
+                    Normalize intensity to 1s. Default is True.
                 degradation : bool, optional
-                    Correct instrument degradation (default: True).
+                    Correct instrument degradation. Default is True.
                 alc : bool, optional
-                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014) (default: True).
+                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014). Default is True.
                 cut_limb : bool, optional
-                    Set off-limb pixel values to NaN (default: True).
+                    Set off-limb pixel values to NaN. Default is True.
             
-           **kwargs**(STEREO/SECCHI):
+            ** kwargs (STEREO/SECCHI) :
                 deconvolve : bool, optional
                     NOT YET IMPLEMENTED FOR STEREO.
                 register : bool, optional
-                    Co-register the map (default: True).
+                    Co-register the map. Default is True.
                 normalize : bool, optional
-                    Normalize intensity to 1s (default: True).
+                    Normalize intensity to 1s. Default is True.
                 alc : bool, optional
-                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014) (default: True).
+                    Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014). Default is True.
                 cut_limb : bool, optional
-                    Set off-limb pixel values to NaN (default: True).
+                    Set off-limb pixel values to NaN. Default is True.
         
         Returns 
         -------
@@ -368,6 +448,8 @@ class pycatch:
             print(f'> pycatch ## CALIBRATION FOR {self.type} NOT YET IMPLEMENTED ##')      
         return
 
+#############################################################################################################################################   
+
     # calibrate EUV data
     def calibration_mag(self,**kwargs):
         """
@@ -375,13 +457,13 @@ class pycatch:
         
         Parameters
         ----------
-           **kwargs**(SDO/HMI): 
+            ** kwargs (SDO/HMI) : 
                 rotate : bool, optional
-                    Rotate the map so that North is up (default: True).
+                    Rotate the map so that North is up. Default is True.
                 align : bool, optional
-                    Align with an AIA map (default: True).
+                    Align with an AIA map. Default is True.
                 cut_limb : bool, optional
-                    Set off-limb pixel values to NaN (default: True).
+                    Set off-limb pixel values to NaN. Default is True.
 
         Returns 
         -------
@@ -394,6 +476,8 @@ class pycatch:
         
         self.magnetogram = cal.calibrate_hmi(self.magnetogram,self.map, **kwargs)   
         return
+
+#############################################################################################################################################   
     
     # make submap
     def cutout(self,top=(1100,1100), bot=(-1100,-1100)):
@@ -403,14 +487,23 @@ class pycatch:
         Parameters
         ----------
             top : tuple, optional
-                Coordinates of the top-right corner (default: (1100, 1100)).
+                Coordinates of the top-right corner. Default is (1100, 1100).
             bot : tuple, optional
-                Coordinates of the bottom-left corner (default: (-1100, -1100)).
+                Coordinates of the bottom-left corner. Default is (-1100, -1100)).
         
         Returns 
         -------
         None
         """
+        # Check the type of the 'top' argument
+        if not isinstance(top, tuple) or len(top) != 2 or not all(isinstance(val, float) for val in top):
+            print("> pycatch ## 'top' argument must be a tuple of two float")
+            return
+
+        # Check the type of the 'bot' argument
+        if not isinstance(bot, tuple) or len(bot) != 2 or not all(isinstance(val, float) for val in bot):
+            print("> pycatch ## 'bot' argument must be a tuple of two float")
+            return
 
 
         if self.map is None:
@@ -425,6 +518,8 @@ class pycatch:
             self.magnetogram=ext.cutout(self.magnetogram,top,bot)
         return
 
+#############################################################################################################################################   
+
     # rebin map
     def rebin(self,ndim=(1024,1024),**kwargs):
         """
@@ -433,15 +528,19 @@ class pycatch:
         Parameters
         ----------
             ndim : tuple, optional
-                New dimensions of the map (default: (1024, 1024)).
-           **kwargs**: 
+                New dimensions of the map. Default is (1024, 1024)).
+            ** kwargs : 
                 Additional keyword arguments passed to sunpy.map.Map.resample (see sunpy documentation for more information).
         
         Returns 
         -------
         None
         """
-
+        if not isinstance(ndim, tuple) or len(ndim) != 2 or not all(isinstance(val, int) for val in ndim):
+            print("> pycatch ## 'ndim' argument must be a tuple of two integers")
+            return 
+                    
+            
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -456,7 +555,9 @@ class pycatch:
             self.magnetogram = self.magnetogram.resample(new_dimensions, **kwargs)
             #self.magnetogram.data[:]=ext.congrid(self.magnetogram.data,(ndim[0],ndim[1]))  #### TEST CONGRID VS RESAMPLE
         return        
-        
+ 
+#############################################################################################################################################   
+       
     # select seed point from EUV data
     def select(self,hint=False,fsize=(10,10)):
         """
@@ -467,12 +568,20 @@ class pycatch:
             hint : bool, optional
                 If True, highlights possible coronal holes. Default is False. 
             fsize : tuple, optional
-                Set the figure size. Default is (10, 10).
+                Set the figure size (in inch). Default is (10, 10).
         
         Returns 
         -------
         None
         """
+        if not isinstance(fsize, tuple) or len(fsize) != 2 or not all(isinstance(val, (int, float)) for val in fsize):
+            print("> pycatch ## 'fsize' argument must be a tuple of two numbers")
+            return
+        
+        # Check the type of the 'hint' argument
+        if not isinstance(hint, bool):
+            print("> pycatch ## 'hint' argument must be type bool")
+            return 
 
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
@@ -481,6 +590,8 @@ class pycatch:
         self.point=poptions.get_point_from_map(self.map,hint, fsize)
         
         return
+
+#############################################################################################################################################   
             
     # set threshold
     def set_threshold(self,threshold, median = True, no_percentage = False):
@@ -489,17 +600,34 @@ class pycatch:
         
         Parameters
         ----------
+            threshold : float
+                The threshold value.
             median : bool, optional
-                If True, the input is assumed to be a fraction of the median solar disk intensity (default: True).
+                If True, the input is assumed to be a fraction of the median solar disk intensity. Default is True.
             no_percentage : bool, optional
-                If True, the input is given as a percentage of the median solar disk intensity (default: False). 
+                If True, the input is given as a percentage of the median solar disk intensity. Default is False.
                 This only works in conjunction with median=True.
         
         Returns 
         -------
         None
         """
-
+        
+        # Check the type of the 'threshold' argument
+        if not isinstance(threshold, float) or not isinstance(threshold, int):
+            print("> pycatch ## 'threshold' argument must be type int or float")
+            return
+        
+        # Check the type of the 'median' argument
+        if not isinstance(median, bool):
+            print("> pycatch ## 'median' argument must be type bool")
+            return
+        
+        # Check the type of the 'no_percentage' argument
+        if not isinstance(no_percentage, bool):
+            print("> pycatch ## 'no_percentage' argument must be type bool")
+            return
+        
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -515,7 +643,37 @@ class pycatch:
         self.threshold=threshold
         return
                         
-            
+#############################################################################################################################################   
+    
+    # suggest threshold based on CATCH statistics (Heinemann et al. 2019)
+    # TH = 0.29 × Im + 11.53 [DN] 
+    def suggest_threshold(self):
+        """
+        Suggest a coronal hole extraction threshold based on the CATCH statistics (Heinemann et al. 2019).
+        
+        This function calculates a threshold value using the formula:
+        TH = 0.29 * Im + 11.53 [DN]
+        
+        where Im is the median solar disk intensity in Data Numbers (DN).
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        """
+        
+        if self.map is None:
+            print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
+            return        
+        self.threshold=ext.median_disk(self.map) * 0.29 + 11.53
+        print(f'> pycatch ## THE SUGGESTED THREHSOLD IS {self.threshold} ##')
+        return
+
+#############################################################################################################################################   
+    
     # pick threshold from histogram
     def threshold_from_hist(self,fsize=(10,5)):
         """
@@ -524,19 +682,24 @@ class pycatch:
         Parameters
         ----------
             fsize : tuple, optional
-                Set the figure size. Default is (10, 5).
+                Set the figure size (in inch). Default is (10, 5).
         
         Returns
         -------
         None
         """
-
+        if not isinstance(fsize, tuple) or len(fsize) != 2 or not all(isinstance(val, (int, float)) for val in fsize):
+            print("> pycatch ## 'fsize' argument must be a tuple of two numbers")
+            return
+        
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
     
         self.threshold=poptions.get_thr_from_hist(self.map,fsize)
         return            
+
+#############################################################################################################################################   
             
     # pick threshold from area curves
     def threshold_from_curves(self,fsize=(10,5)):
@@ -548,13 +711,16 @@ class pycatch:
         Parameters
         ----------
             fsize : tuple, optional
-                Set the figure size. Default is (10, 5).
+                Set the figure size (in inch). Default is (10, 5).
         
         Returns
         -------
         None
         """
-
+        if not isinstance(fsize, tuple) or len(fsize) != 2 or not all(isinstance(val, (int, float)) for val in fsize):
+            print("> pycatch ## 'fsize' argument must be a tuple of two numbers")
+            return
+        
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -565,6 +731,8 @@ class pycatch:
         
         self.threshold=poptions.get_thr_from_curves(self.map,self.curves,fsize)
         return                 
+
+#############################################################################################################################################   
 
     # calculate area curves
     def calculate_curves(self,verbose=True):
@@ -580,7 +748,12 @@ class pycatch:
         -------
         None
         """
-
+        
+        # Check the type of the 'verbose' argument
+        if not isinstance(verbose, bool):
+            print("> pycatch ##  'verbose' argument must be type bool")
+            return
+    
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -594,6 +767,8 @@ class pycatch:
         xloc, area, uncertainty =mapping.get_curves(self.map,self.point,kernel=self.kernel)
         self.curves = [xloc, area, uncertainty/area]
         return              
+
+#############################################################################################################################################   
             
     # calculate binmap
     def extract_ch(self, kernel=None):
@@ -610,7 +785,11 @@ class pycatch:
         -------
         None
         """
-
+        
+        # Check the type of the 'kernel' argument
+        if kernel is not None and not isinstance(kernel, int):
+            print("> pycatch ## 'kernel' argument must be type int or None")
+            return
 
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
@@ -627,8 +806,15 @@ class pycatch:
         
         binmaps=[mapping.extract_ch(self.map, self.threshold+i, self.kernel,self.point) for i in np.arange(5)-2]
         
+        if np.nansum(binmaps[4].data):
+            print('> pycatch ## WARNING ##')
+            print('> pycatch ## NO CORONAL HOLE EXTRACTED WITH THE CURRENT CONFIGURATION ##')
+            return
+        
         self.binmap =mapping.to_5binmap(binmaps)
         return               
+
+#############################################################################################################################################   
             
     # calculate morphological properties
     def calculate_properties(self, mag=False, align=False):
@@ -646,6 +832,16 @@ class pycatch:
         -------
         None
         """
+        # Check the type of the 'mag' argument
+        if not isinstance(mag, bool):
+            print("> pycatch ## 'mag' argument must be type bool")
+            return
+        
+        # Check the type of the 'align' argument
+        if not isinstance(align, bool):
+            print("> pycatch ## 'align' argument must be type bool")
+            return
+    
 
         if mag:
             if self.binmap is None:
@@ -683,7 +879,7 @@ class pycatch:
             self.properties.update(dict1)
         return                 
             
-           
+#############################################################################################################################################              
             
     # save properties to txt file
     def print_properties(self,file=None, overwrite=False):
@@ -701,7 +897,16 @@ class pycatch:
         -------
         None
         """
+        # Check the type of the 'file' argument
+        if file is not None and not isinstance(file, str):
+            print("> pycatch ## 'file' argument must be type str or None")
+            return
 
+        # Check the type of the 'overwrite' argument
+        if not isinstance(overwrite, bool):
+            print("> pycatch ## 'overwrite' argument must be type bool")
+            return
+            
         if self.properties['A'] is None:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## NO MORPHOLOGICAL PROPERTIES CALCULATED ##')
@@ -734,7 +939,8 @@ class pycatch:
         except Exception as ex:
                 print("> pycatch ## Error during saving file:", ex)
         return           
-                
+
+#############################################################################################################################################                   
     
     # display coronal hole
     def plot_map(self,boundary=True,uncertainty=True,original=False, cutout=None, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=True,**kwargs):
@@ -754,7 +960,7 @@ class pycatch:
             mag : bool, optional
                 Show a magnetogram instead of the coronal hole plot. Default is False.
             fsize : tuple, optional
-                Set the figure size. Default is (10, 10).
+                Set the figure size (in inch). Default is (10, 10).
             save : bool, optional
                 Save and close the figure. Default is False.
             sfile : str, optional
@@ -762,14 +968,51 @@ class pycatch:
                 Use only in conjunction with save=True. Default is None.
             overwrite : bool, optional
                 Overwrite the plot if it already exists. Default is True.
-           **kwargs**: keyword arguments
+            ** kwargs : keyword arguments
                 Additional keyword arguments for sunpy.map.Map.plot(). See the sunpy documentation for more information.
         
         Returns
         -------
         None
         """
+        # Check the types of various arguments
+        if not isinstance(boundary, bool):
+            print("> pycatch ## 'boundary' argument must be type bool")
+            return
 
+        if not isinstance(uncertainty, bool):
+            print("> pycatch ## 'uncertainty' argument must be type bool")
+            return
+
+        if not isinstance(original, bool):
+            print("> pycatch ## 'original' argument must be type bool")
+            return
+
+        if cutout is not None and (not isinstance(cutout, list) or any(not isinstance(coord, tuple) or len(coord) != 2 for coord in cutout)):
+            print("> pycatch ## 'cutout' argument must be a list of tuples with format [(xbot, ybot), (xtop, ytop)]")
+            return
+
+        if not isinstance(mag, bool):
+            print("> pycatch ## 'mag' argument must be type bool")
+            return
+
+        if not isinstance(fsize, tuple) or len(fsize) != 2 or not all(isinstance(val, (int, float)) for val in fsize):
+            print("> pycatch ## 'fsize' argument must be a tuple of two numbers")
+            return
+
+        if not isinstance(save, bool):
+            print("> pycatch ## 'save' argument must be type bool")
+            return
+
+        if sfile is not None and not isinstance(sfile, str):
+            print("> pycatch ## 'sfile' argument must be type str or None")
+            return
+
+        if not isinstance(overwrite, bool):
+            print("> pycatch ## 'overwrite' argument must be type bool")
+            return
+            
+            
         if self.map is None:
             print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
             return
@@ -820,10 +1063,9 @@ class pycatch:
                                 
                                 
         poptions.plot_map(pmap,pbinmap,boundary,uncertainty, fsize, save, fpath,**kwargs)
-            
-        
         return                     
                 
+#############################################################################################################################################   
             
     # save binary map to fits file
     def bin2fits(self,file=None, small=False, overwrite=False):          
@@ -833,7 +1075,7 @@ class pycatch:
         Parameters
         ----------
         file : str, optional
-            Filepath to save the FITS file. If not provided, a default filename will be generated based on observation metadata (default: None).
+            Filepath to save the FITS file. If not provided, a default filename will be generated based on observation metadata. Default is None.
         small : bool, optional
             Save a smaller region around the coronal hole. Default is False.
         overwrite : bool, optional
@@ -843,7 +1085,19 @@ class pycatch:
         -------
         None
         """            
-        
+
+        # Check the type of the 'file' argument
+        if file is not None and not isinstance(file, str):
+            print("> pycatch ## 'file' argument must be type str or None")
+
+        # Check the type of the 'small' argument
+        if not isinstance(small, bool):
+            print("> pycatch ## 'small' argument must be type bool")
+
+        # Check the type of the 'overwrite' argument
+        if not isinstance(overwrite, bool):
+            print("> pycatch ## 'overwrite' argument must be type bool")
+            
         if self.binmap is None:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## NO CORONAL HOLE EXTRACTED ##')
@@ -869,12 +1123,16 @@ class pycatch:
                 if os.path.isfile(fpath):
                     os.remove(fpath)
             
+            meta_update={'pyCATCH':self.__version__,'THR':self.threshold,'SEED':self.point}
+                
             if small:
                 bot,top=ext.get_extent(self.binmap)
-                pbinmap=ext.cutout(self.binmap,top,bot)
+                pbinmap=ext.cutout(self.binmap,(top[0]-50,top[1]-50),(bot[0]-50,bot[1]-50))
+                pbinmap.meta.update({meta_update})
                 pbinmap.save(fpath)
                 pass
             else:
+                self.binmap.meta.update({meta_update})
                 self.binmap.save(fpath)
                 
             print(f'> pycatch ## CORONAL HOLE EXTRACTION SAVED: {fpath}  ##')
@@ -883,5 +1141,5 @@ class pycatch:
                 print("> pycatch ## Error during saving file:", ex)
         return                       
             
-            
+#############################################################################################################################################               
 
