@@ -250,25 +250,39 @@ class pycatch:
 #############################################################################################################################################   
         
     # Download data using sunpy FIDO
-    def download(self, time,instr='AIA', wave=193, **kwargs): #Fido.search **kwargs
+    def download(self, time,instr='AIA', wave=193,source='SDO', **kwargs): #Fido.search **kwargs
         """
-        Download an EUV map using VSO (Virtual Solar Observatory).
+        Download an EUV map using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour of the time provided.
         
         Parameters
         ----------
+            time : tuple, list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time
+                The time of the EUV image to download. Input needs be parsed by sunpy.time.parse_time()
             instrument : str, optional
                 The instrument of the EUV image to download. Default is 'AIA'.
+            source : str, optional
+                The source of the EUV image to download. Default is 'SDO'.
             wavelength : int, optional
-                The wavelength of the EUV image to download. Default is 193.
+                The wavelength of the EUV image to download (in Angstrom). Default is 193.
             ** kwargs: 
                 Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
         
         Returns 
         -------
         None
+        
+        Notes 
+        -------
+        For EIT data: instr='EIT', wave=195, source='SOHO'
+        For STEREO-A data: instr='SECCHI', wave=195, source='STEREO_A'
+        For STEREO-B data: instr='SECCHI', wave=195, source='STEREO_B'
         """
 
         if not isinstance(instr, str):
+            print("> pycatch ##  'instr' argument must be type str")
+            return
+
+        if not isinstance(source, str):
             print("> pycatch ##  'instr' argument must be type str")
             return
         
@@ -277,39 +291,36 @@ class pycatch:
             print("> pycatch ## 'wave' argument must be type int")
             return 
         
-        t=sunpy.time.parse_time(time)
+        try:
+            t=sunpy.time.parse_time(time)
+        except:
+            print("> pycatch ## 'time' argument must be valid input for sunpy.time.parse_time()")
+            return 
         # jsoc not working !!
-        # email = 'test@gmail.com',
-        # if instr == 'AIA' and jsoc:
-        #     if email == 'test@gmail.com':
-        #         print('> pycatch ## WARNING ##')
-        #         print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
-        #         return
-        #     else:
-        #         res = Fido.search(a.Time(t-10*u.min,t+10*u.min),a.jsoc.Series('aia.lev1_euv_12s'),a.Wavelength(wave*u.angstrom),a.jsoc.Notify(email), **kwargs)
-        #         tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
-        #         indx=(np.abs(tv-t)).argmin()
-        #         downloaded_files = Fido.fetch(res[:,indx], path=self.dir + '/{instrument}/{file}') 
-        #         self.map_file = downloaded_files[0]
-        #         self.type = 'SDO' 
-
-        # else:
-        res = Fido.search(a.Time(t-10*u.min,t+10*u.min, near=t),a.Instrument(instr),a.Wavelength(wave*u.angstrom), **kwargs)
-        downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}' ) 
-        self.map_file = downloaded_files[0]
-        
+        try:
+            res = Fido.search(a.Time(t-60*u.min,t+60*u.min, near=t),a.Instrument(instr),a.Wavelength(wave*u.angstrom), a.Source(source), **kwargs)
+            if len(res) == 0:
+                print(f"> pycatch ## No data found: {source} {instr} {wave}A, {t.value}")
+                return
+            downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}' ) 
+            self.map_file = downloaded_files[0]
+        except:
+            print(f"> pycatch ## DOWNLOAD OF {source} {instr} {wave}A, {t.value} FAILED")
         return 
     
 #############################################################################################################################################   
     
-    def download_magnetogram(self, cadence=45, **kwargs): #Fido.search **kwargs
+    def download_magnetogram(self, cadence=45,time=None, **kwargs): #Fido.search **kwargs
         """
-        Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory).
+        Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour ot the time of the EUV image.
         
         Parameters
         ----------
             cadence : int, optional
                 Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.
+            time : optional, tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time
+                The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time()
+                Overrides the date of the EUV map and the filepath of the downloaded data is not stored in self.magnetogram_file.
             ** kwargs : 
                 Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
         
@@ -320,37 +331,59 @@ class pycatch:
         
         # Check the type of the 'cadence' argument
         if not isinstance(cadence, int):
-            print("> pycatch ## 'wave' argument must be type int")
+            print("> pycatch ## 'cadence' argument must be type int")
             return 
-        
-        if 'SDO' in self.type and self.map is not None:
-            t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
-             
-             
-            # jsoc not working !!
-            # if email == 'test@gmail.com':
-            #     print('> pycatch ## WARNING ##')
-            #     print('> pycatch ## You must have an email address registered with JSOC before you are allowed to make a request. ##')
-            #     return
-            # else:
-            #     res = Fido.search(a.Time(t-30*u.min,t+30*u.min, near=t),a.jsoc.Series(f'hmi.m_{cadence}s'), **kwargs)
-            #     tv=sunpy.time.parse_time(np.array([res.show('T_REC')[0][i][0] for i in range(res.file_num)]))
-            #     indx=(np.abs(tv-t)).argmin()
-            #     downloaded_files = Fido.fetch(res[:,indx], path=self.dir + '/{instrument}/{file}') 
-            #     self.magnetogram_file = downloaded_files[0]
+                    
+        # input date    
+        if time is not None:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## Download of HMI 45s magnetograms only ##')            
-            print('> pycatch ## Manually download 720s magnetograms from JSOC ##')   
-            if cadence == 45:
-                res = Fido.search(a.Time(t-10*u.min,t+10*u.min, near=t),a.Instrument('HMI'),a.Physobs("LOS_magnetic_field"), **kwargs)
-                downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}') 
-                self.magnetogram_file = downloaded_files[0]
-            
-        elif 'SOHO' in self.type and self.map is not None:
-            print('> pycatch ## DOWNLOAD OF SOHO MAGNETOGRAMS NOT YET IMPLEMENTED ##')
+            print('> pycatch ## Manually download 720s magnetograms from JSOC ##')
+            try:
+                t=sunpy.time.parse_time(time)
+            except:
+                print("> pycatch ## 'time' argument must be valid input for sunpy.time.parse_time()")
+                return 
+                    
+            try:
+                if cadence == 45:
+                    res = Fido.search(a.Time(t-60*u.min,t+60*u.min, near=t),a.Instrument('HMI'),a.Physobs("LOS_magnetic_field"), **kwargs)
+                    if len(res) == 0:
+                        print(f"> pycatch ## No magnetogram found: {t.value}")
+                        return
+                    downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}') 
+                    return
+            except:
+                print(f"> pycatch ## DOWNLOAD OF MAGNETOGRAM {t.value} FAILED")           
+                return
+                
+                
         else:
-            print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
-            return
+            if self.type is not None and self.map is not None:
+            
+                if 'SDO' in self.type: 
+                    t=sunpy.time.parse_time(self.map.meta['DATE-OBS'])
+        
+                    print('> pycatch ## WARNING ##')
+                    print('> pycatch ## Download of HMI 45s magnetograms only ##')            
+                    print('> pycatch ## Manually download 720s magnetograms from JSOC ##')
+                    try:
+                        if cadence == 45:
+                            res = Fido.search(a.Time(t-60*u.min,t+60*u.min, near=t),a.Instrument('HMI'),a.Physobs("LOS_magnetic_field"), **kwargs)
+                            if len(res) == 0:
+                                print(f"> pycatch ## No magnetogram found: {t.value}")
+                                return
+                            downloaded_files = Fido.fetch(res, path=self.dir + '/{instrument}/{file}') 
+                            self.magnetogram_file = downloaded_files[0]
+                            return
+                    except:
+                        print(f"> pycatch ## DOWNLOAD OF MAGNETOGRAM {t.value} FAILED")
+                        return
+                elif 'SOHO' in self.type:
+                    print('> pycatch ## DOWNLOAD OF SOHO MAGNETOGRAMS NOT YET IMPLEMENTED ##')
+            else:
+                print('> pycatch ## NO INTENSITY IMAGE LOADED ##')
+                return
         return
         
  #############################################################################################################################################   
@@ -406,6 +439,7 @@ class pycatch:
             ** kwargs (SDO/AIA) :
                 deconvolve : bool or numpy.ndarray, optional
                     Use PSF deconvolution. Default is None. It takes a custom PSF array as input, if True uses aiapy.psf.deconvolve.
+                    WARNING: can take about 10 minutes.
                 register : bool, optional
                     Co-register the map. Default is True.
                 normalize : bool, optional
@@ -496,12 +530,12 @@ class pycatch:
         None
         """
         # Check the type of the 'top' argument
-        if not isinstance(top, tuple) or len(top) != 2 or not all(isinstance(val, float) for val in top):
+        if not isinstance(top, tuple) or len(top) != 2 or not all(isinstance(val, (int,float)) for val in top):
             print("> pycatch ## 'top' argument must be a tuple of two float")
             return
 
         # Check the type of the 'bot' argument
-        if not isinstance(bot, tuple) or len(bot) != 2 or not all(isinstance(val, float) for val in bot):
+        if not isinstance(bot, tuple) or len(bot) != 2 or not all(isinstance(val, (int,float)) for val in bot):
             print("> pycatch ## 'bot' argument must be a tuple of two float")
             return
 
@@ -515,7 +549,7 @@ class pycatch:
         self.cutout_status      = True
         
         if self.magnetogram is not None:
-            self.magnetogram=ext.cutout(self.magnetogram,top,bot)
+            self.magnetogram=mapping.cutout(self.magnetogram,top,bot)
         return
 
 #############################################################################################################################################   
@@ -546,10 +580,10 @@ class pycatch:
             return
           
         new_dimensions = ndim * u.pixel
-        self.map = self.map.resample(new_dimensions, **kwargs)
+        self.map = self.map.resample(new_dimensions,**kwargs)
         #self.map.data[:]=ext.congrid(self.map.data,(ndim[0],ndim[1]))  #### TEST CONGRID VS RESAMPLE
         self.rebin_status = True
-        self.point, self.curves,  self.threshold = None, None, None
+        self.point, self.curves = None, None
         
         if self.magnetogram is not None:
             self.magnetogram = self.magnetogram.resample(new_dimensions, **kwargs)
@@ -614,8 +648,8 @@ class pycatch:
         """
         
         # Check the type of the 'threshold' argument
-        if not isinstance(threshold, float) or not isinstance(threshold, int):
-            print("> pycatch ## 'threshold' argument must be type int or float")
+        if not isinstance(threshold, (int,float)):
+            print("> pycatch ## 'threshold' argument must be type int or float:")
             return
         
         # Check the type of the 'median' argument
@@ -806,7 +840,7 @@ class pycatch:
         
         binmaps=[mapping.extract_ch(self.map, self.threshold+i, self.kernel,self.point) for i in np.arange(5)-2]
         
-        if np.nansum(binmaps[4].data):
+        if np.nansum(binmaps[4].data) == 0:
             print('> pycatch ## WARNING ##')
             print('> pycatch ## NO CORONAL HOLE EXTRACTED WITH THE CURRENT CONFIGURATION ##')
             return
@@ -855,7 +889,7 @@ class pycatch:
             if align:
                 self.magnetogram = cal.calibrate_hmi(self.magnetogram,self.binmap)  
                 
-            if self.binmap.shape != self.magnetogram.shape:
+            if self.binmap.data.shape != self.magnetogram.data.shape:
                 print('> pycatch ## BINMAP AND MAGNETOGRAM ARE NOT MATCHING ##')
                 return
             
@@ -1104,41 +1138,47 @@ class pycatch:
             print('> pycatch ## NO FITS FILE SAVED ##')
             return
         
-        try:  
+        #try:  
         
-            if file is not None:
-                fpath = file
-            else:
-                datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
-                typestr=self.map.meta['telescop'].replace('/','_')
-                nr=0
-                fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+f'_{nr}'+'.fits'
-                
-                if not overwrite:
-                    while os.path.isfile(fpath):
-                        nr+=1
-                        fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+f'_{nr}'+'.fits'
-                
-            if overwrite:
-                if os.path.isfile(fpath):
-                    os.remove(fpath)
+        if small:
+            addstr='_small'
+        else:
+            addstr=''
             
-            meta_update={'pyCATCH':self.__version__,'THR':self.threshold,'SEED':self.point}
+        if file is not None:
+            fpath = file
+        else:
+            datestr=sunpy.time.parse_time(self.map.meta['DATE-OBS']).strftime('%Y%m%dT%H%M%S')
+            typestr=self.map.meta['telescop'].replace('/','_')
+            nr=0
+            fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.fits'
+            
+            if not overwrite:
+                while os.path.isfile(fpath):
+                    nr+=1
+                    fpath=self.dir+'pyCATCH_binmap_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.fits'
+            
+        if overwrite:
+            if os.path.isfile(fpath):
+                os.remove(fpath)
+        
+        meta_update={'pyCATCH':self.__version__,'THR':self.threshold,'SEED':self.point}
+            
+        if small:
+            bot,top=ext.get_extent(self.binmap)
+            print(top,bot)
+            pbinmap=mapping.cutout(self.binmap,(top[0]+50,top[1]+50),(bot[0]-50,bot[1]-50))
+            pbinmap.meta.update(meta_update)
+            pbinmap.save(fpath)
+            pass
+        else:
+            self.binmap.meta.update(meta_update)
+            self.binmap.save(fpath)
+            
+        print(f'> pycatch ## CORONAL HOLE EXTRACTION SAVED: {fpath}  ##')
                 
-            if small:
-                bot,top=ext.get_extent(self.binmap)
-                pbinmap=ext.cutout(self.binmap,(top[0]-50,top[1]-50),(bot[0]-50,bot[1]-50))
-                pbinmap.meta.update({meta_update})
-                pbinmap.save(fpath)
-                pass
-            else:
-                self.binmap.meta.update({meta_update})
-                self.binmap.save(fpath)
-                
-            print(f'> pycatch ## CORONAL HOLE EXTRACTION SAVED: {fpath}  ##')
-                
-        except Exception as ex:
-                print("> pycatch ## Error during saving file:", ex)
+       # except Exception as ex:
+       #         print("> pycatch ## Error during saving file:", ex)
         return                       
             
 #############################################################################################################################################               

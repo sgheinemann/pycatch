@@ -13,7 +13,7 @@ import sunpy.map
 import sunpy.util.net
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
-import pycatch.utils.ch_mapping as mapping
+import pycatch.utils.extensions as ext
 
 mpl.rcParams['axes.unicode_minus'] = True
 mpl.rcParams['mathtext.fontset'] = 'stixsans'
@@ -216,14 +216,14 @@ def get_point_from_map(map, hint, fsize):
     map.plot(axes=ax)
     
     if hint:
-        thr=mapping.median_disk(map)*0.35
+        thr=ext.median_disk(map)*0.35
         
         hpc_coords=all_coordinates_from_map(map)
         mask=coordinate_is_on_solar_disk(hpc_coords)
         data=np.where(np.logical_and(mask == True,map.data <= thr),1, np.nan)
         thrmap=sunpy.map.Map((data,map.meta))
         
-        thrmap.plot_settings['cmap']=plt.get_cmap('spring')
+        thrmap.plot_settings['cmap']=plt.get_cmap('Blues')
         thrmap.plot(axes=ax, alpha =0.5, vmin=0.9, vmax=1.1 )
 
     
@@ -309,9 +309,8 @@ def get_thr_from_curves(map, curves ,fsize):
     data_median = np.nanmedian(data)
     
     x=curves[0]
-    y1=curves[1]
-    y2=curves[2]
-    
+    y1=np.where(np.isinf(curves[1]),np.nan,curves[1])
+    y2=np.where(np.isinf(curves[2]),np.nan,curves[2])    
     plt.ion()
 
     fig = plt.figure(figsize=fsize)
@@ -324,14 +323,14 @@ def get_thr_from_curves(map, curves ,fsize):
     
     ytiti=r'Uncertainty $\epsilon$'
     ax2.set_ylabel(ytiti, color='red')   
-
+    ax2.set_yscale("log")
    
     xtiti=r'$I$ [DN/s]'    
     ax.set_xlabel(xtiti)
 
     ax.set_xlim(0,x[-1])
     ax.set_ylim(0,np.nanmax(y1)*1.1)
-    ax2.set_ylim(0,np.nanmax(y2)*1.1)
+    ax2.set_ylim(np.nanmin(y2)*0.9,np.nanmax(y2)*1.1)
 
     p1,=ax.plot(x,y1,linewidth=2,color='blue')
     p2,=ax2.plot(x,y2,linewidth=2, color='red')

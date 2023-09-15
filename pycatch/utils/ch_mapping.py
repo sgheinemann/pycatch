@@ -10,14 +10,14 @@ import time
 
 from astropy.coordinates import SkyCoord
 
+from matplotlib import colormaps as cms
+
 import sunpy
 import sunpy.map
 import sunpy.util.net
 from sunpy.coordinates import frames
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 
-
-from cv2 import morphologyEx
 from cv2 import MORPH_OPEN,MORPH_CLOSE
 import cv2
 
@@ -187,14 +187,14 @@ def extract_ch(map,thr, kernel, seed):
     """    
     if kernel is None:
         indx= ext.find_nearest((np.arange(5)+1)*0.6, map.meta['cdelt1'])
-        kernels=2**np.arange(5)[::-1]
+        kernels=np.array([8,  6,  4,  2, 1])
         kernel=kernels[indx]
         
     data=np.where(map.data < thr, 1, 0)
     data=data.astype(np.float32)
     kern=make_circle(kernel)
-    data=morphologyEx(data,MORPH_CLOSE,kern)
-    data=morphologyEx(data,MORPH_OPEN,kern)
+    data=cv2.morphologyEx(data,MORPH_CLOSE,kern)
+    data=cv2.morphologyEx(data,MORPH_OPEN,kern)
     cont,hier=cv2.findContours(image=data.astype('uint8'), mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
     
     bindata=np.zeros((data.shape))
@@ -312,6 +312,7 @@ def to_5binmap(binmaps):
     
     nbinmap=binmaps[0]
     nbinmap.data[:]=help_array[:]
+    nbinmap.plot_settings['cmap'] = cms['Greys_r']
     
     return nbinmap
 
@@ -430,7 +431,6 @@ def catch_calc(binmaps, binary =True):
     bdata=np.zeros((binmaps[0].data.shape[0],binmaps[0].data.shape[1]))
     coreg=curve_corr(binmaps[0])
     for i,binmap in enumerate(binmaps):
-        print(np.sum(binmap.data))
         areas[i]=ch_area(binmap, binary =True, coreg=coreg)
         com=ndi.center_of_mass(binmap.data)
         com_pix[:,i]=com[1],com[0]
@@ -549,7 +549,7 @@ def catch_mag(binmaps, magmap):
     for i,binmap in enumerate(binmaps):
         bs[i],bus[i],fs[i],fus[i]=ch_flux(binmap,magmap, coreg=coreg)
         
-    fb=fs/fus
+    fb=100*(fs/fus)
     
     return np.nanmean(bs), catch_uncertainty(bs),  np.nanmean(bus), catch_uncertainty(bus), np.nanmean(fs), catch_uncertainty(fs),  np.nanmean(fus), catch_uncertainty(fus), np.nanmean(fb), catch_uncertainty(fb)     
 
@@ -581,19 +581,20 @@ def ch_flux(binmap, magmap, coreg=[0]):
     float
         The unsigned magnetic flux of the coronal hole region.
     """    
-    rsun=map.meta['rsun_obs']
-    arcsecTOkm = 1/rsun*696342
-    data = np.where(binmap.data == binmap.data, 1, 0)
     
     if len(coreg) == 1:
         vcoreg = curve_corr(binmap)
     else: 
         vcoreg=coreg
-        
-    tmparea = data * binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg * arcsecTOkm**2
-    fluxcoreg = data * binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg * arcsecTOkm**2 * 1e10 
-    tmpflux = data * magmap.data * fluxcoreg * tmparea
-    tmpflux_abs = data * np.abs(magmap.data) * fluxcoreg * tmparea
+                 
+    rsun=binmap.meta['rsun_obs']
+    arcsecTOkm = 1/rsun*696342
+    data = np.where(binmap.data == 1, 1, np.nan)
+
+    tmparea = binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg * arcsecTOkm**2
+    fluxcoreg = binmap.meta['cdelt1'] * binmap.meta['cdelt2'] * vcoreg**2 * arcsecTOkm**2 * 1e10 
+    tmpflux = data * magmap.data * fluxcoreg
+    tmpflux_abs = data * np.abs(magmap.data) * fluxcoreg
     
-    return np.nansum(tmpflux/tmparea),np.nansum(tmpflux_abs/tmparea),np.nansum(tmpflux)/1e20,np.nansum(tmpflux_abs)/1e20 
+    return np.nanmean(tmpflux/tmparea)/1e10,np.nanmean(tmpflux_abs/tmparea)/1e10,np.nansum(tmpflux)/1e20,np.nansum(tmpflux_abs)/1e20 
 

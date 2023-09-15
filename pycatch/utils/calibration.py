@@ -12,7 +12,7 @@ import astropy.time
 from sunpy.map.maputils import all_coordinates_from_map,coordinate_is_on_solar_disk
 import copy
 
-import aiapy
+import aiapy.psf
 import aiapy.calibrate as cal
 
 #--------------------------------------------------------------------------------------------------
@@ -50,9 +50,10 @@ def calibrate_aia(map, register= True, normalize = True,deconvolve = None, alc =
     calmap=copy.deepcopy(map)
     #deconvolve image
     if deconvolve is not None:
-        if deconvolve:
-            calmap = aiapy.psf.deconvolve(calmap)
-        if not deconvolve:
+        if deconvolve == True:
+            psf = aiapy.psf.psf(calmap.wavelength)
+            calmap = aiapy.psf.deconvolve(calmap,psf=psf)
+        elif deconvolve == False:
             pass
         else:
             print('> pycatch ## CUSTOM PSF NOT YET IMPLEMENTED ##')    

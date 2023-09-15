@@ -20,7 +20,7 @@ def init_props():
 
     idict             =  {'A':('Area','10^10 km^2'),                        'dA':('Area Uncertainty','10^10 km^2'),
                           'Imean':('Mean Intensity','ct/s'),                'dImean':('Mean Intensity Uncertainty','ct/s'),
-                          'Imedian':('Median Intensity','ct/s'),            'dImedian':('Mean Intensity Uncertainty','ct/s'),
+                          'Imed':('Median Intensity','ct/s'),               'dImed':('Mean Intensity Uncertainty','ct/s'),
                           'CoM':('Center of Mass (lon,lat)','°,°'),         'dCoM':('Center of Mass Uncertainty (lon,lat)','°,°'),
                           'ex':('Extent (lon1,lon2,lat1,lat2) ','°,°,°,°'), 'dex':('Extent Uncertainty (lon1,lon2,lat1,lat2)','°,°,°,°'),
                           'Bs':('Signed Mean Magnetic Flux Density','G'),   'dBs':('Signed Mean Magnetic Flux Density Uncertainty','G'),
@@ -58,20 +58,21 @@ def printtxt(file, pdict,names, version):
     
     with open(file, 'w') as f:
         f.write(f'# pyCATCH v{version}\n')
-        
-        f.write('#') 
-        for key,value in names.items():
-            f.write(f'{value[0]} ; ')
+        f.write('# ======================') 
         f.write('\n')
-        
-        f.write('#') 
         for key,value in names.items():
-            f.write(f'{value[1]} ; ')
-        f.write('\n')    
-        
-        for key,value in pdict.items():
-            f.write(f'{value:.2f} ; ')
-    
+            
+            
+            if not hasattr(pdict[key],'__len__'):
+                f.write(f'{pdict[key]:.2f}')
+            else:
+                for n,v in enumerate(pdict[key]):
+                    f.write(f'{v:.2f}')
+                    if n < len(pdict[key])-1:
+                        f.write(' , ')
+                
+            f.write(f'      [{value[1]}]       {value[0]} ')
+            f.write('\n')
     return
  
 #--------------------------------------------------------------------------------------------------   
@@ -119,7 +120,7 @@ def get_extent(map):
     mask=map.data > 0
     tx=mask*hpc_coords.Tx.value
     ty=mask*hpc_coords.Ty.value
-    return (np.nanmin(tx.min),np.nanmin(ty)), (np.nanmin(tx),np.nanmin(ty))
+    return (np.nanmin(tx),np.nanmin(ty)), (np.nanmax(tx),np.nanmax(ty))
     
 #--------------------------------------------------------------------------------------------------
 # find nearest index
