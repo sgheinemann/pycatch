@@ -1166,7 +1166,7 @@ class pycatch:
             
         if small:
             bot,top=ext.get_extent(self.binmap)
-            print(top,bot)
+            print(top,bot) 
             pbinmap=mapping.cutout(self.binmap,(top[0]+50,top[1]+50),(bot[0]-50,bot[1]-50))
             pbinmap.meta.update(meta_update)
             pbinmap.save(fpath)

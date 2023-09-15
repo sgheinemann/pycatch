@@ -246,7 +246,8 @@ This map contains both the 2D data array and metadata associated with the magnet
 <blockquote>
 <div><dl class="simple">
 <dt>** kwargs (SDO/AIA) :</dt><dd><dl class="simple">
-<dt>deconvolve<span class="classifier">bool or numpy.ndarray, optional</span></dt><dd><p>Use PSF deconvolution. Default is None. It takes a custom PSF array as input, if True uses aiapy.psf.deconvolve.</p>
+<dt>deconvolve<span class="classifier">bool or numpy.ndarray, optional</span></dt><dd><p>Use PSF deconvolution. Default is None. It takes a custom PSF array as input, if True uses aiapy.psf.deconvolve.
+WARNING: can take about 10 minutes.</p>
 </dd>
 <dt>register<span class="classifier">bool, optional</span></dt><dd><p>Co-register the map. Default is True.</p>
 </dd>
@@ -331,15 +332,19 @@ This map contains both the 2D data array and metadata associated with the magnet
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pycatch.pycatch.pycatch.download">
-<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AIA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">193</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download" title="Permalink to this definition"></a></dt>
-<dd><p>Download an EUV map using VSO (Virtual Solar Observatory).</p>
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AIA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">193</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SDO'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download an EUV map using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour of the time provided.</p>
 <section id="id13">
 <h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
+<dt>time<span class="classifier">tuple, list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the EUV image to download. Input needs be parsed by sunpy.time.parse_time()</p>
+</dd>
 <dt>instrument<span class="classifier">str, optional</span></dt><dd><p>The instrument of the EUV image to download. Default is ‘AIA’.</p>
 </dd>
-<dt>wavelength<span class="classifier">int, optional</span></dt><dd><p>The wavelength of the EUV image to download. Default is 193.</p>
+<dt>source<span class="classifier">str, optional</span></dt><dd><p>The source of the EUV image to download. Default is ‘SDO’.</p>
+</dd>
+<dt>wavelength<span class="classifier">int, optional</span></dt><dd><p>The wavelength of the EUV image to download (in Angstrom). Default is 193.</p>
 </dd>
 <dt>** kwargs: </dt><dd><p>Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).</p>
 </dd>
@@ -350,17 +355,26 @@ This map contains both the 2D data array and metadata associated with the magnet
 <h3>Returns<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
 <p>None</p>
 </section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
+<p>For EIT data: instr=’EIT’, wave=195, source=’SOHO’
+For STEREO-A data: instr=’SECCHI’, wave=195, source=’STEREO_A’
+For STEREO-B data: instr=’SECCHI’, wave=195, source=’STEREO_B’</p>
+</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pycatch.pycatch.pycatch.download_magnetogram">
-<span class="sig-name descname"><span class="pre">download_magnetogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download_magnetogram" title="Permalink to this definition"></a></dt>
-<dd><p>Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory).</p>
+<span class="sig-name descname"><span class="pre">download_magnetogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download_magnetogram" title="Permalink to this definition"></a></dt>
+<dd><p>Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour ot the time of the EUV image.</p>
 <section id="id15">
 <h3>Parameters<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>cadence<span class="classifier">int, optional</span></dt><dd><p>Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.</p>
+</dd>
+<dt>time<span class="classifier">optional, tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time()
+Overrides the date of the EUV map and the filepath of the downloaded data is not stored in self.magnetogram_file.</p>
 </dd>
 <dt>** kwargs<span class="classifier"></span></dt><dd><p>Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).</p>
 </dd>
