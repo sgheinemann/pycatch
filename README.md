@@ -1,7 +1,7 @@
 pyCATCH
 ========
 
-Welcome to pyCATCH: the phython implementation of the Collection of Analysis Tools for Coronal Holes (CATCH; Heinemann et al. 2019)
+Welcome to pyCATCH: the python implementation of the Collection of Analysis Tools for Coronal Holes (CATCH; Heinemann et al. 2019)
 
 CATCH was originally implemented in SSW IDL (See http://lmsal.com/solarsoft/ssw_install.html and http://www.lmsal.com/solarsoft/ssw_packages_info.html).
 It is also available on GitHub (https://github.com/sgheinemann/CATCH)
