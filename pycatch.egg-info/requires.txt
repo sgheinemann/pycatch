@@ -1,9 +1,0 @@
-numpy
-sunpy
-astropy
-opencv-python
-matplotlib
-reproject
-scipy
-numexpr
-joblib
