@@ -75,6 +75,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledging.html">Acknowledging or Citing pyCATCH</a></li>
 </ul>
 
         </div>
@@ -176,6 +177,9 @@ This map contains both the 2D data array and metadata associated with the magnet
 <section id="returns">
 <h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
 <p>None</p>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h2>
 <dl class="py method">
 <dt class="sig sig-object py" id="pycatch.pycatch.pycatch.bin2fits">
 <span class="sig-name descname"><span class="pre">bin2fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.bin2fits" title="Permalink to this definition"></a></dt>
@@ -373,7 +377,7 @@ For STEREO-B data: instr=’SECCHI’, wave=195, source=’STEREO_B’</p>
 <div><dl class="simple">
 <dt>cadence<span class="classifier">int, optional</span></dt><dd><p>Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.</p>
 </dd>
-<dt>time<span class="classifier">optional, tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time()
+<dt>time<span class="classifier">tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time(), optional
 Overrides the date of the EUV map and the filepath of the downloaded data is not stored in self.magnetogram_file.</p>
 </dd>
 <dt>** kwargs<span class="classifier"></span></dt><dd><p>Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).</p>
@@ -430,7 +434,7 @@ This function outputs a binary map to pycatch.binmap.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pycatch.pycatch.pycatch.plot_map">
-<span class="sig-name descname"><span class="pre">plot_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.plot_map" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.plot_map" title="Permalink to this definition"></a></dt>
 <dd><p>Display a coronal hole plot.</p>
 <section id="id21">
 <h3>Parameters<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h3>
@@ -442,7 +446,12 @@ This function outputs a binary map to pycatch.binmap.</p>
 </dd>
 <dt>original<span class="classifier">bool, optional</span></dt><dd><p>Show the original image. Default is False.</p>
 </dd>
+<dt>small<span class="classifier">bool, optional</span></dt><dd><p>Plot a smaller region around the coronal hole. Default is True.
+Overrides cutout.</p>
+</dd>
 <dt>cutout<span class="classifier">list of tuple, optional</span></dt><dd><p>Display a cutout around the extracted coronal hole. Format: [(xbot, ybot), (xtop, ytop)]. Default is None.</p>
+</dd>
+<dt>small<span class="classifier">bool, optional</span></dt><dd><p>Display grid. Default if False.</p>
 </dd>
 <dt>mag<span class="classifier">bool, optional</span></dt><dd><p>Show a magnetogram instead of the coronal hole plot. Default is False.</p>
 </dd>
@@ -453,7 +462,7 @@ This function outputs a binary map to pycatch.binmap.</p>
 <dt>sfile<span class="classifier">str, optional</span></dt><dd><p>Filepath to save the image as pdf. If not provided, a default filename will be generated based on observation metadata.
 Use only in conjunction with save=True. Default is None.</p>
 </dd>
-<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Overwrite the plot if it already exists. Default is True.</p>
+<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Overwrite the plot if it already exists. Default is False.</p>
 </dd>
 <dt>** kwargs<span class="classifier">keyword arguments</span></dt><dd><p>Additional keyword arguments for sunpy.map.Map.plot(). See the sunpy documentation for more information.</p>
 </dd>

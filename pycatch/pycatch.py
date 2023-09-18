@@ -79,6 +79,10 @@ class pycatch:
     Returns 
     -------
     None
+    
+    
+    Methods
+    -------
     """
     
     __version__ = __version__
@@ -235,7 +239,7 @@ class pycatch:
             save_dict={}
             for key,value in self.__dict__.items():
                 save_dict.update({key:value}) 
-                
+
             with open(fpath, "wb") as f:
                 pickle.dump(save_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
             print(f'> pycatch ## OBJECT SAVED: {fpath}  ##')
@@ -318,8 +322,8 @@ class pycatch:
         ----------
             cadence : int, optional
                 Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.
-            time : optional, tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time
-                The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time()
+            time : tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time
+                The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time(), optional
                 Overrides the date of the EUV map and the filepath of the downloaded data is not stored in self.magnetogram_file.
             ** kwargs : 
                 Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).
@@ -977,7 +981,7 @@ class pycatch:
 #############################################################################################################################################                   
     
     # display coronal hole
-    def plot_map(self,boundary=True,uncertainty=True,original=False, cutout=None, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=True,**kwargs):
+    def plot_map(self,boundary=True,uncertainty=True,original=False,small=True, cutout=None, grid=False, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=False,**kwargs):
         """
         Display a coronal hole plot.
         
@@ -989,8 +993,13 @@ class pycatch:
                 Show the uncertainty of the coronal hole boundary. Default is True.
             original : bool, optional
                 Show the original image. Default is False.
+            small : bool, optional
+                Plot a smaller region around the coronal hole. Default is True.
+                Overrides cutout.
             cutout : list of tuple, optional
                 Display a cutout around the extracted coronal hole. Format: [(xbot, ybot), (xtop, ytop)]. Default is None.
+            small : bool, optional
+                Display grid. Default if False.
             mag : bool, optional
                 Show a magnetogram instead of the coronal hole plot. Default is False.
             fsize : tuple, optional
@@ -1001,7 +1010,7 @@ class pycatch:
                 Filepath to save the image as pdf. If not provided, a default filename will be generated based on observation metadata.
                 Use only in conjunction with save=True. Default is None.
             overwrite : bool, optional
-                Overwrite the plot if it already exists. Default is True.
+                Overwrite the plot if it already exists. Default is False.
             ** kwargs : keyword arguments
                 Additional keyword arguments for sunpy.map.Map.plot(). See the sunpy documentation for more information.
         
@@ -1022,9 +1031,18 @@ class pycatch:
             print("> pycatch ## 'original' argument must be type bool")
             return
 
+        if not isinstance(small, bool):
+            print("> pycatch ## 'small' argument must be type bool")
+            return
+
         if cutout is not None and (not isinstance(cutout, list) or any(not isinstance(coord, tuple) or len(coord) != 2 for coord in cutout)):
             print("> pycatch ## 'cutout' argument must be a list of tuples with format [(xbot, ybot), (xtop, ytop)]")
             return
+
+        if not isinstance(grid, bool):
+            print("> pycatch ## 'grid' argument must be type bool")
+            return
+
 
         if not isinstance(mag, bool):
             print("> pycatch ## 'mag' argument must be type bool")
@@ -1065,15 +1083,21 @@ class pycatch:
         if original:
             pmap=self.original_map
             addstr+='_original'
+            new_dimensions = self.original_map.data.shape * u.pixel
+            pbinmap=self.binmap.resample(new_dimensions)
         elif mag:
             pmap=self.magnetogram
             addstr+='_mag'
         else:
             pmap=self.map
-            
-        if cutout is not None:
-            pmap=ext.cutout(pmap,cutout[1],cutout[0])
-            pbinmap=ext.cutout(self.binmap,cutout[1],cutout[0])
+        
+        if small:
+            bot,top=ext.get_extent(self.binmap)
+            pbinmap=mapping.cutout(self.binmap,(top[0]+50,top[1]+50),(bot[0]-50,bot[1]-50))
+            pmap=mapping.cutout(pmap,(top[0]+50,top[1]+50),(bot[0]-50,bot[1]-50))
+        elif cutout is not None:
+            pmap=mapping.cutout(pmap,cutout[1],cutout[0])
+            pbinmap=mapping.cutout(self.binmap,cutout[1],cutout[0])
             addstr+='_cut'
         else:
             pbinmap=self.binmap
@@ -1093,10 +1117,10 @@ class pycatch:
             if not overwrite:
                 while os.path.isfile(fpath):
                     nr+=1
-                    fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+f'_{nr}'+'.pdf'
+                    fpath=self.dir+'pyCATCH_plot_'+typestr+'_'+datestr+addstr+f'_{nr}'+'.pdf'
                                 
                                 
-        poptions.plot_map(pmap,pbinmap,boundary,uncertainty, fsize, save, fpath,**kwargs)
+        poptions.plot_map(pmap,pbinmap,boundary,uncertainty, fsize, save, fpath,grid,**kwargs)
         return                     
                 
 #############################################################################################################################################   
@@ -1166,7 +1190,6 @@ class pycatch:
             
         if small:
             bot,top=ext.get_extent(self.binmap)
-            print(top,bot) 
             pbinmap=mapping.cutout(self.binmap,(top[0]+50,top[1]+50),(bot[0]-50,bot[1]-50))
             pbinmap.meta.update(meta_update)
             pbinmap.save(fpath)

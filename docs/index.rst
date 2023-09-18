@@ -32,7 +32,7 @@ file.
    
    changelog.rst
    
-   
+   acknowledging.rst
 
 References
 ----------

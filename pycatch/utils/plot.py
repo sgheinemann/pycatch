@@ -2,11 +2,12 @@ import os, sys
 
 import numpy as np
 from scipy.ndimage import gaussian_filter1d
+import astropy.units as u
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backend_bases import MouseButton
-
+import matplotlib.patheffects as pe
 
 import sunpy
 import sunpy.map
@@ -343,7 +344,7 @@ def get_thr_from_curves(map, curves ,fsize):
     
 
 # open window to display coronal hole
-def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,**kwargs):
+def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,grid,**kwargs):
     """
     Plot a solar map with optional boundaries and uncertainty overlays.
     
@@ -373,7 +374,10 @@ def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,**kwargs):
     fig = plt.figure(figsize=fsize)
     ax = fig.add_subplot(projection=map)
     map.plot(axes=ax,**kwargs)
-    
+
+    ax.coords[0].set_ticks_visible(False)
+    ax.coords[1].set_ticks_visible(False)
+        
     if bmap is not None:
         bmap.meta['bunit']=''
         if uncertainty:
@@ -381,22 +385,28 @@ def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,**kwargs):
             umap=sunpy.map.Map((hdata,bmap.meta))
             
             umap.plot_settings['cmap']=plt.get_cmap('winter_r')
-            umap.plot(axes=ax, alpha =0.7, vmin=0.9, vmax=1. )
+            umap.plot(axes=ax, alpha =0.7, vmin=0.9, vmax=1., autoalign=True)
     
         if boundary:
-            hdata=np.where(bmap.data > 2, 1,np.nan)
-            bpmap=sunpy.map.Map((hdata,bmap.meta))
-    
-            contours = bpmap.contour(0.9)
+            contours = bmap.contour(2.5*u.dimensionless_unscaled)
             
             for contour in contours:
-                ax.plot_coord(contour, color='red')
+                ax.plot_coord(contour,lw=1.5 ,color='red')
+
+    if grid:
+        ax.grid(True)
+    else:
+        ax.grid(False)
+
+    ax.text(0.99,0.01,'pyCATCH', ha='right', va='bottom',fontfamily='fantasy', color='white', fontsize=20, 
+            transform = ax.transAxes, path_effects=[pe.withStroke(linewidth=4, foreground="black")] )
 
     plt.show()
     if save:
         fig.savefig(spath,bbox_inches='tight')
         plt.close(fig)
-    
+        print(f'> pycatch ## FIGURE SAVED TO: {spath}  ##')
+        
     return 
 
 

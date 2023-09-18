@@ -9,7 +9,7 @@ import numexpr as ne
 import time
 
 from astropy.coordinates import SkyCoord
-
+import astropy.units as u
 from matplotlib import colormaps as cms
 
 import sunpy

@@ -72,20 +72,22 @@ if option == 1:
 
 # 2) use thr derived from CATCH statistics (Heinemann et al. 2019)
 #    it is advised to use this option to get a starting suggestion and then adjust the threshold as needed
-if option == 2:
+elif option == 2:
     ch.suggest_threshold() #
     
 # 3) select from solar disk intensity distribution
-if option == 3:
+elif option == 3:
     ch.threshold_from_hist()
     
 # 4) calculate the coronal hole area and uncertainty as function of intensity
 #    and select the boundary to be where the uncertainty is lowest
 #    Warning: Can be slow with high resolution
-if option == 4:
+elif option == 4:
     ch.calculate_curves() 
     ch.threshold_from_curves()
 
+else:
+    pass
 #------------------------------------------------------------------------------
 # extract the coronal hole
 ch.extract_ch()

@@ -20,8 +20,7 @@ file.
 Installing pyCATCH
 -------------------
 
-For v0.1:
-Download or pull pyCATCH repository from GitHub
+For pyCATCH version < 1.0.0:	Download or pull pyCATCH repository from GitHub
 ::
 
 	https://github.com/sgheinemann/pycatch
