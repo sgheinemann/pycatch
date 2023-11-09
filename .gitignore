@@ -2,6 +2,7 @@
 ./pycatch/utils/__pycache__
 ./pycatch/__pycache__
 ./__pycache__
+__pycache__
 
 # Distribution and build directories
 dist/
