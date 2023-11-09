@@ -1,0 +1,116 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter A
+  \item \spxentry{annulus\_limb\_correction()}\spxextra{in module pycatch.utils.calibration}, 
+		\hyperpage{17}
+
+  \indexspace
+  \bigletter B
+  \item \spxentry{bin2fits()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{9}
+
+  \indexspace
+  \bigletter C
+  \item \spxentry{calc\_area\_curves()}\spxextra{in module pycatch.utils.ch\_mapping}, 
+		\hyperpage{19}
+  \item \spxentry{calculate\_curves()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{9}
+  \item \spxentry{calculate\_properties()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{9}
+  \item \spxentry{calibrate\_aia()}\spxextra{in module pycatch.utils.calibration}, \hyperpage{17}
+  \item \spxentry{calibrate\_hmi()}\spxextra{in module pycatch.utils.calibration}, \hyperpage{18}
+  \item \spxentry{calibrate\_stereo()}\spxextra{in module pycatch.utils.calibration}, 
+		\hyperpage{19}
+  \item \spxentry{calibration()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{10}
+  \item \spxentry{calibration\_mag()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{11}
+  \item \spxentry{catch\_calc()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{20}
+  \item \spxentry{catch\_mag()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{21}
+  \item \spxentry{catch\_uncertainty()}\spxextra{in module pycatch.utils.ch\_mapping}, 
+		\hyperpage{21}
+  \item \spxentry{ch\_area()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{22}
+  \item \spxentry{ch\_flux()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{22}
+  \item \spxentry{congrid()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{27}
+  \item \spxentry{curve\_corr()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{23}
+  \item \spxentry{cutout()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{23}
+  \item \spxentry{cutout()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{11}
+
+  \indexspace
+  \bigletter D
+  \item \spxentry{download()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{11}
+  \item \spxentry{download\_magnetogram()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{12}
+
+  \indexspace
+  \bigletter E
+  \item \spxentry{extract\_ch()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{24}
+  \item \spxentry{extract\_ch()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{13}
+
+  \indexspace
+  \bigletter F
+  \item \spxentry{find\_nearest()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{27}
+  \item \spxentry{from\_5binmap()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{24}
+
+  \indexspace
+  \bigletter G
+  \item \spxentry{get\_curves()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{24}
+  \item \spxentry{get\_extent()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{28}
+  \item \spxentry{get\_intensity()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{25}
+  \item \spxentry{get\_point\_from\_map()}\spxextra{in module pycatch.utils.plot}, \hyperpage{30}
+  \item \spxentry{get\_thr\_from\_curves()}\spxextra{in module pycatch.utils.plot}, \hyperpage{30}
+  \item \spxentry{get\_thr\_from\_hist()}\spxextra{in module pycatch.utils.plot}, \hyperpage{31}
+
+  \indexspace
+  \bigletter I
+  \item \spxentry{init\_props()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{28}
+
+  \indexspace
+  \bigletter L
+  \item \spxentry{load()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{13}
+
+  \indexspace
+  \bigletter M
+  \item \spxentry{make\_circle()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{25}
+  \item \spxentry{median\_disk()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{28}
+  \item \spxentry{min\_picker()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{26}
+  \item \spxentry{module}
+    \subitem \spxentry{pycatch.utils.calibration}, \hyperpage{17}
+    \subitem \spxentry{pycatch.utils.ch\_mapping}, \hyperpage{19}
+    \subitem \spxentry{pycatch.utils.extensions}, \hyperpage{27}
+    \subitem \spxentry{pycatch.utils.plot}, \hyperpage{29}
+
+  \indexspace
+  \bigletter P
+  \item \spxentry{plot\_map()}\spxextra{in module pycatch.utils.plot}, \hyperpage{31}
+  \item \spxentry{plot\_map()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{13}
+  \item \spxentry{print\_properties()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{14}
+  \item \spxentry{printtxt()}\spxextra{in module pycatch.utils.extensions}, \hyperpage{29}
+  \item \spxentry{pycatch}\spxextra{class in pycatch.pycatch}, \hyperpage{7}
+  \item \spxentry{pycatch.utils.calibration}
+    \subitem \spxentry{module}, \hyperpage{17}
+  \item \spxentry{pycatch.utils.ch\_mapping}
+    \subitem \spxentry{module}, \hyperpage{19}
+  \item \spxentry{pycatch.utils.extensions}
+    \subitem \spxentry{module}, \hyperpage{27}
+  \item \spxentry{pycatch.utils.plot}
+    \subitem \spxentry{module}, \hyperpage{29}
+
+  \indexspace
+  \bigletter R
+  \item \spxentry{rebin()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{14}
+
+  \indexspace
+  \bigletter S
+  \item \spxentry{save()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{15}
+  \item \spxentry{select()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{15}
+  \item \spxentry{set\_threshold()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{15}
+  \item \spxentry{SnappingCursor}\spxextra{class in pycatch.utils.plot}, \hyperpage{29}
+  \item \spxentry{suggest\_threshold()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{16}
+
+  \indexspace
+  \bigletter T
+  \item \spxentry{threshold\_from\_curves()}\spxextra{pycatch.pycatch.pycatch method}, 
+		\hyperpage{16}
+  \item \spxentry{threshold\_from\_hist()}\spxextra{pycatch.pycatch.pycatch method}, \hyperpage{16}
+  \item \spxentry{to\_5binmap()}\spxextra{in module pycatch.utils.ch\_mapping}, \hyperpage{26}
+
+\end{sphinxtheindex}

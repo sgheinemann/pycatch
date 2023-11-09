@@ -34,46 +34,53 @@ def init_props():
 #--------------------------------------------------------------------------------------------------
 #print properties to txt file
 def printtxt(file, pdict,names, version):
-    """
-    Write property data to a text file.
+	"""
+	Write property data to a text file.
 
-    This function writes property data to a text file with a specific format. It includes the version number,
-    property names, and units as headers followed by the property values.
+	This function writes property data to a text file with a specific format. It includes the version number,
+	property names, and units as headers followed by the property values.
 
-    Parameters
-    ----------
-    file : str
-        The filepath to the output text file.
-    pdict : dict
-        A dictionary containing property data, where keys correspond to property abbreviations.
-    names : dict
-        A dictionary mapping property abbreviations to tuples containing full property names and units.
-    version : str
-        The version number of the pyCATCH software.
+	Parameters
+	----------
+	file : str
+	The filepath to the output text file.
+	pdict : dict
+	A dictionary containing property data, where keys correspond to property abbreviations.
+	names : dict
+	A dictionary mapping property abbreviations to tuples containing full property names and units.
+	version : str
+	The version number of the pyCATCH software.
 
-    Returns
-    -------
-    None
-    """
-    
-    with open(file, 'w') as f:
-        f.write(f'# pyCATCH v{version}\n')
-        f.write('# ======================') 
-        f.write('\n')
-        for key,value in names.items():
-            
-            
-            if not hasattr(pdict[key],'__len__'):
-                f.write(f'{pdict[key]:.2f}')
-            else:
-                for n,v in enumerate(pdict[key]):
-                    f.write(f'{v:.2f}')
-                    if n < len(pdict[key])-1:
-                        f.write(' , ')
-                
-            f.write(f'      [{value[1]}]       {value[0]} ')
-            f.write('\n')
-    return
+	Returns
+	-------
+	None
+	"""
+
+	with open(file, 'w') as f:
+		f.write(f'# pyCATCH v{version}\n')
+		f.write('# ======================') 
+		f.write('\n')
+		for key,value in names.items():
+			if not hasattr(pdict[key],'__len__'):
+				if pdict[key] is None:
+					f.write('n/A')
+				else:
+					f.write(f'{pdict[key]:.2f}')
+			else:
+				for n,v in enumerate(pdict[key]):
+				    
+				    	if v is None:
+				    		f.write('n/A')
+				    	else:
+				    		f.write(f'{v:.2f}')
+				    	
+				    	if n < len(pdict[key])-1:
+				    		f.write(' , ')
+			
+			f.write(f'      [{value[1]}]       {value[0]} ')
+			f.write('\n')
+	return
+ 
  
 #--------------------------------------------------------------------------------------------------   
 # median from disk

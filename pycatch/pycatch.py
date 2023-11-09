@@ -15,7 +15,7 @@ import pycatch.utils.calibration as cal
 import pycatch.utils.extensions as ext
 import pycatch.utils.plot as poptions
 import pycatch.utils.ch_mapping as mapping
-from _version import __version__
+from pycatch._version import __version__
 
 class pycatch:
     """
@@ -121,12 +121,12 @@ class pycatch:
         """
         
         # Check the type of the 'dir' argument
-        dir_path = kwargs.get('dir', str(pathlib.Path.home()))
+        dir_path = kwargs.get('dir', str(pathlib.Path.home())+'/')
         if not isinstance(dir_path, str):
             raise TypeError("> pycatch ##  'dir' argument must be type str")
 
         # Check the type of the 'save_dir' argument
-        save_dir_path = kwargs.get('save_dir', str(pathlib.Path.home()))
+        save_dir_path = kwargs.get('save_dir', str(pathlib.Path.home())+'/')
         if not isinstance(save_dir_path, str):
             raise TypeError("> pycatch ##  'save_dir' argument must be type str")
 
@@ -393,7 +393,7 @@ class pycatch:
  #############################################################################################################################################   
    
     # Load data using sunpy FIDO
-    def load(self, mag=False, file = None):
+    def load(self,file = None, mag=False):
         """
         Load maps.
         
@@ -969,7 +969,7 @@ class pycatch:
                         nr+=1
                         fpath=self.dir+'pyCATCH_properties_'+typestr+'_'+datestr+f'_{nr}'+'.txt'
             
-                ext.printtxt(fpath, self.properties,self.names, pycatch.__version__)
+                ext.printtxt(fpath, self.properties,self.names, self.__version__)
                     
                 print(f'> pycatch ## PROPERTIES SAVED: {fpath}  ##')
                 
@@ -981,7 +981,7 @@ class pycatch:
 #############################################################################################################################################                   
     
     # display coronal hole
-    def plot_map(self,boundary=True,uncertainty=True,original=False,small=True, cutout=None, grid=False, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=False,**kwargs):
+    def plot_map(self,boundary=True,uncertainty=True,original=False,small=False, cutout=None, grid=False, mag=False, fsize=(10,10),save=False,sfile=None,overwrite=False,**kwargs):
         """
         Display a coronal hole plot.
         
@@ -994,11 +994,11 @@ class pycatch:
             original : bool, optional
                 Show the original image. Default is False.
             small : bool, optional
-                Plot a smaller region around the coronal hole. Default is True.
+                Plot a smaller region around the coronal hole. Default is False.
                 Overrides cutout.
             cutout : list of tuple, optional
                 Display a cutout around the extracted coronal hole. Format: [(xbot, ybot), (xtop, ytop)]. Default is None.
-            small : bool, optional
+            grid : bool, optional
                 Display grid. Default if False.
             mag : bool, optional
                 Show a magnetogram instead of the coronal hole plot. Default is False.

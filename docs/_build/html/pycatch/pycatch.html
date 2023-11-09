@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pycatch.pycatch &mdash; pyCATCH  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pycatch.utils" href="utils/index.html" />
+    <link rel="prev" title="pyCATCH" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyCATCH
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with pyCATCH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">pyCATCH</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pycatch.pycatch</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pycatch.pycatch.pycatch"><code class="docutils literal notranslate"><span class="pre">pycatch</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.bin2fits"><code class="docutils literal notranslate"><span class="pre">pycatch.bin2fits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.calculate_curves"><code class="docutils literal notranslate"><span class="pre">pycatch.calculate_curves()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.calculate_properties"><code class="docutils literal notranslate"><span class="pre">pycatch.calculate_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.calibration"><code class="docutils literal notranslate"><span class="pre">pycatch.calibration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.calibration_mag"><code class="docutils literal notranslate"><span class="pre">pycatch.calibration_mag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.cutout"><code class="docutils literal notranslate"><span class="pre">pycatch.cutout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.download"><code class="docutils literal notranslate"><span class="pre">pycatch.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.download_magnetogram"><code class="docutils literal notranslate"><span class="pre">pycatch.download_magnetogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.extract_ch"><code class="docutils literal notranslate"><span class="pre">pycatch.extract_ch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.load"><code class="docutils literal notranslate"><span class="pre">pycatch.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.plot_map"><code class="docutils literal notranslate"><span class="pre">pycatch.plot_map()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.print_properties"><code class="docutils literal notranslate"><span class="pre">pycatch.print_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.rebin"><code class="docutils literal notranslate"><span class="pre">pycatch.rebin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.save"><code class="docutils literal notranslate"><span class="pre">pycatch.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.select"><code class="docutils literal notranslate"><span class="pre">pycatch.select()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.set_threshold"><code class="docutils literal notranslate"><span class="pre">pycatch.set_threshold()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.suggest_threshold"><code class="docutils literal notranslate"><span class="pre">pycatch.suggest_threshold()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.threshold_from_curves"><code class="docutils literal notranslate"><span class="pre">pycatch.threshold_from_curves()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pycatch.pycatch.pycatch.threshold_from_hist"><code class="docutils literal notranslate"><span class="pre">pycatch.threshold_from_hist()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils/index.html">pycatch.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledging.html">Acknowledging or Citing pyCATCH</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyCATCH</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">pyCATCH</a></li>
+      <li class="breadcrumb-item active">pycatch.pycatch</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pycatch/pycatch.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pycatch-pycatch">
+<h1>pycatch.pycatch<a class="headerlink" href="#pycatch-pycatch" title="Permalink to this heading"></a></h1>
+<p>The <cite>pycatch</cite> class is the primary access point to pyCATCH’s functionalities.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycatch.pycatch.</span></span><span class="sig-name descname"><span class="pre">pycatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">restore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Python library for extracting and analyzing coronal holes from solar EUV images and magnetograms.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>dir<span class="classifier">str</span></dt><dd><p>The directory path. Defaults to the user’s home directory if not provided.</p>
+</dd>
+<dt>save_dir<span class="classifier">str</span></dt><dd><p>The save directory path. Defaults to the user’s home directory if not provided.</p>
+</dd>
+<dt>map_file<span class="classifier">str</span></dt><dd><p>The map file path.</p>
+</dd>
+<dt>magnetogram_file<span class="classifier">str</span></dt><dd><p>The magnetogram file path.</p>
+</dd>
+<dt>map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The loaded and configured EUV map.
+This map contains both the 2D data array and metadata associated with the EUV observation.</p>
+</dd>
+<dt>original_map<span class="classifier">sunpy.map.Map</span></dt><dd><p>The original EUV map.
+This map contains the initially loaded EUV observation before any operations.</p>
+</dd>
+<dt>magnetogram<span class="classifier">sunpy.map.Map</span></dt><dd><p>The loaded and configured magnetogram.
+This map contains both the 2D data array and metadata associated with the magnetic field data.</p>
+</dd>
+<dt>point<span class="classifier">list of float</span></dt><dd><p>Seed point for coronal hole extraction.</p>
+</dd>
+<dt>curves<span class="classifier">tuple</span></dt><dd><ul class="simple">
+<li><p>The threshold range.</p></li>
+<li><p>The calculated area curves for the coronal hole.</p></li>
+<li><p>The uncertainty in the area curves.</p></li>
+</ul>
+</dd>
+<dt>threshold<span class="classifier">float</span></dt><dd><p>Coronal hole extraction threshold.</p>
+</dd>
+<dt>type<span class="classifier">str</span></dt><dd><p>Placeholder for type information.</p>
+</dd>
+<dt>rebin_status<span class="classifier">bool</span></dt><dd><p>Whether the map was rebinned.</p>
+</dd>
+<dt>cutout_status<span class="classifier">bool</span></dt><dd><p>Whether the map was cutout.</p>
+</dd>
+<dt>kernel<span class="classifier">int</span></dt><dd><p>Size of the circular kernel for morphological operations.</p>
+</dd>
+<dt>binmap<span class="classifier">sunpy.map.Map</span></dt><dd><p>Single 5-level binary map with the coronal hole extraction, where each level represents a different threshold value.</p>
+</dd>
+<dt>properties<span class="classifier">dict</span></dt><dd><p>A dictionary containing the calculate coronal hole properties.</p>
+</dd>
+<dt>__version__<span class="classifier">str</span></dt><dd><p>Version number of pyCATCH</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dir<span class="classifier">str, optional</span></dt><dd><p>Directory for storing and loading data. Default is the home directory.</p>
+</dd>
+<dt>save_dir<span class="classifier">str, optional</span></dt><dd><p>Directory for storing data. Default is the home directory.</p>
+</dd>
+<dt>map_file<span class="classifier">str, optional</span></dt><dd><p>Filepath to EUV/Intensity map, needs to be loadable with sunpy.map.Map(). Default is None.</p>
+</dd>
+<dt>magnetogram_file<span class="classifier">str, optional</span></dt><dd><p>Filepath to magnetogram, needs to be loadable with sunpy.map.Map(). Default is None.</p>
+</dd>
+<dt>load<span class="classifier">str, optional</span></dt><dd><p>Loads a previously saved pyCATCH object from the specified path, which overrides any other keywords. Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<p>None</p>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.bin2fits">
+<span class="sig-name descname"><span class="pre">bin2fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.bin2fits" title="Permalink to this definition"></a></dt>
+<dd><p>Save the coronal hole binary map to a FITS file.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>file<span class="classifier">str, optional</span></dt><dd><p>Filepath to save the FITS file. If not provided, a default filename will be generated based on observation metadata. Default is None.</p>
+</dd>
+<dt>small<span class="classifier">bool, optional</span></dt><dd><p>Save a smaller region around the coronal hole. Default is False.</p>
+</dd>
+<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Flag to overwrite the file if it already exists. Default is False.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.calculate_curves">
+<span class="sig-name descname"><span class="pre">calculate_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.calculate_curves" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate area and uncertainty curves as a function of intensity.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>verbose<span class="classifier">bool, optional</span></dt><dd><p>Display warnings. Default is True.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.calculate_properties">
+<span class="sig-name descname"><span class="pre">calculate_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.calculate_properties" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the morphological coronal hole properties from the extracted binary map.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>mag<span class="classifier">bool, optional</span></dt><dd><p>Calculate magnetic properties instead. Default is False.</p>
+</dd>
+<dt>align<span class="classifier">bool, optional</span></dt><dd><p>Call pycatch.calibration_mag() to align with binary map. Default is False.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.calibration">
+<span class="sig-name descname"><span class="pre">calibration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.calibration" title="Permalink to this definition"></a></dt>
+<dd><p>Calibrate the intensity image.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>** kwargs (SDO/AIA) :</dt><dd><dl class="simple">
+<dt>deconvolve<span class="classifier">bool or numpy.ndarray, optional</span></dt><dd><p>Use PSF deconvolution. Default is None. It takes a custom PSF array as input, if True uses aiapy.psf.deconvolve.
+WARNING: can take about 10 minutes.</p>
+</dd>
+<dt>register<span class="classifier">bool, optional</span></dt><dd><p>Co-register the map. Default is True.</p>
+</dd>
+<dt>normalize<span class="classifier">bool, optional</span></dt><dd><p>Normalize intensity to 1s. Default is True.</p>
+</dd>
+<dt>degradation<span class="classifier">bool, optional</span></dt><dd><p>Correct instrument degradation. Default is True.</p>
+</dd>
+<dt>alc<span class="classifier">bool, optional</span></dt><dd><p>Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014). Default is True.</p>
+</dd>
+<dt>cut_limb<span class="classifier">bool, optional</span></dt><dd><p>Set off-limb pixel values to NaN. Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt>** kwargs (STEREO/SECCHI) :</dt><dd><dl class="simple">
+<dt>deconvolve<span class="classifier">bool, optional</span></dt><dd><p>NOT YET IMPLEMENTED FOR STEREO.</p>
+</dd>
+<dt>register<span class="classifier">bool, optional</span></dt><dd><p>Co-register the map. Default is True.</p>
+</dd>
+<dt>normalize<span class="classifier">bool, optional</span></dt><dd><p>Normalize intensity to 1s. Default is True.</p>
+</dd>
+<dt>alc<span class="classifier">bool, optional</span></dt><dd><p>Apply Annulus Limb Correction, Python implementation from Verbeek et al. (2014). Default is True.</p>
+</dd>
+<dt>cut_limb<span class="classifier">bool, optional</span></dt><dd><p>Set off-limb pixel values to NaN. Default is True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.calibration_mag">
+<span class="sig-name descname"><span class="pre">calibration_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.calibration_mag" title="Permalink to this definition"></a></dt>
+<dd><p>Calibrate the magnetogram.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>** kwargs (SDO/HMI)<span class="classifier"></span></dt><dd><dl class="simple">
+<dt>rotate<span class="classifier">bool, optional</span></dt><dd><p>Rotate the map so that North is up. Default is True.</p>
+</dd>
+<dt>align<span class="classifier">bool, optional</span></dt><dd><p>Align with an AIA map. Default is True.</p>
+</dd>
+<dt>cut_limb<span class="classifier">bool, optional</span></dt><dd><p>Set off-limb pixel values to NaN. Default is True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.cutout">
+<span class="sig-name descname"><span class="pre">cutout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1100,</span> <span class="pre">1100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1100,</span> <span class="pre">-1100)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.cutout" title="Permalink to this definition"></a></dt>
+<dd><p>Cut a subfield of the map (if a magnetogram is loaded, it will also be cut).</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>top<span class="classifier">tuple, optional</span></dt><dd><p>Coordinates of the top-right corner. Default is (1100, 1100).</p>
+</dd>
+<dt>bot<span class="classifier">tuple, optional</span></dt><dd><p>Coordinates of the bottom-left corner. Default is (-1100, -1100)).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.download">
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AIA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">193</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SDO'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download an EUV map using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour of the time provided.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>time<span class="classifier">tuple, list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the EUV image to download. Input needs be parsed by sunpy.time.parse_time()</p>
+</dd>
+<dt>instrument<span class="classifier">str, optional</span></dt><dd><p>The instrument of the EUV image to download. Default is ‘AIA’.</p>
+</dd>
+<dt>source<span class="classifier">str, optional</span></dt><dd><p>The source of the EUV image to download. Default is ‘SDO’.</p>
+</dd>
+<dt>wavelength<span class="classifier">int, optional</span></dt><dd><p>The wavelength of the EUV image to download (in Angstrom). Default is 193.</p>
+</dd>
+<dt>** kwargs: </dt><dd><p>Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
+<p>For EIT data: instr=’EIT’, wave=195, source=’SOHO’
+For STEREO-A data: instr=’SECCHI’, wave=195, source=’STEREO_A’
+For STEREO-B data: instr=’SECCHI’, wave=195, source=’STEREO_B’</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.download_magnetogram">
+<span class="sig-name descname"><span class="pre">download_magnetogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.download_magnetogram" title="Permalink to this definition"></a></dt>
+<dd><p>Download a magnetogram matching the EUV image date using VSO (Virtual Solar Observatory). It downloads the closest image within +/- 1 hour ot the time of the EUV image.</p>
+<section id="id15">
+<h3>Parameters<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>cadence<span class="classifier">int, optional</span></dt><dd><p>Download Line-of-Sight (LOS) magnetogram with the specified cadence in seconds. Default is 45.</p>
+</dd>
+<dt>time<span class="classifier">tuple, None or list, str, pandas.Timestamp, pandas.Series, pandas.DatetimeIndex, datetime.datetime, datetime.date, numpy.datetime64, numpy.ndarray, astropy.time.Time</span></dt><dd><p>The time of the magnetogram to download. Input needs be parsed by sunpy.time.parse_time(), optional
+Overrides the date of the EUV map and the filepath of the downloaded data is not stored in self.magnetogram_file.</p>
+</dd>
+<dt>** kwargs<span class="classifier"></span></dt><dd><p>Additional keyword arguments passed to sunpy.Fido.search (see sunpy documentation for more information).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id16">
+<h3>Returns<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.extract_ch">
+<span class="sig-name descname"><span class="pre">extract_ch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.extract_ch" title="Permalink to this definition"></a></dt>
+<dd><p>Extract the coronal hole from the intensity map using the selected threshold and seed point.
+This function outputs a binary map to pycatch.binmap.</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>kernel<span class="classifier">int or None, optional</span></dt><dd><p>Size of the circular kernel for morphological operations. Default is None. If None, a kernel size depending on resolution will be used.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id18">
+<h3>Returns<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load maps.</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>mag<span class="classifier">bool, optional</span></dt><dd><p>Flag to load a magnetogram. Default is False.</p>
+</dd>
+<dt>file<span class="classifier">str, optional</span></dt><dd><p>Filepath to load a specific map. If not set, it loads pycatch.map_file or pycatch.magnetogram_file. Default is None.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.plot_map">
+<span class="sig-name descname"><span class="pre">plot_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.plot_map" title="Permalink to this definition"></a></dt>
+<dd><p>Display a coronal hole plot.</p>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>boundary<span class="classifier">bool, optional</span></dt><dd><p>Overplot the coronal hole boundary. Default is True.</p>
+</dd>
+<dt>uncertainty<span class="classifier">bool, optional</span></dt><dd><p>Show the uncertainty of the coronal hole boundary. Default is True.</p>
+</dd>
+<dt>original<span class="classifier">bool, optional</span></dt><dd><p>Show the original image. Default is False.</p>
+</dd>
+<dt>small<span class="classifier">bool, optional</span></dt><dd><p>Plot a smaller region around the coronal hole. Default is False.
+Overrides cutout.</p>
+</dd>
+<dt>cutout<span class="classifier">list of tuple, optional</span></dt><dd><p>Display a cutout around the extracted coronal hole. Format: [(xbot, ybot), (xtop, ytop)]. Default is None.</p>
+</dd>
+<dt>grid<span class="classifier">bool, optional</span></dt><dd><p>Display grid. Default if False.</p>
+</dd>
+<dt>mag<span class="classifier">bool, optional</span></dt><dd><p>Show a magnetogram instead of the coronal hole plot. Default is False.</p>
+</dd>
+<dt>fsize<span class="classifier">tuple, optional</span></dt><dd><p>Set the figure size (in inch). Default is (10, 10).</p>
+</dd>
+<dt>save<span class="classifier">bool, optional</span></dt><dd><p>Save and close the figure. Default is False.</p>
+</dd>
+<dt>sfile<span class="classifier">str, optional</span></dt><dd><p>Filepath to save the image as pdf. If not provided, a default filename will be generated based on observation metadata.
+Use only in conjunction with save=True. Default is None.</p>
+</dd>
+<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Overwrite the plot if it already exists. Default is False.</p>
+</dd>
+<dt>** kwargs<span class="classifier">keyword arguments</span></dt><dd><p>Additional keyword arguments for sunpy.map.Map.plot(). See the sunpy documentation for more information.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.print_properties">
+<span class="sig-name descname"><span class="pre">print_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.print_properties" title="Permalink to this definition"></a></dt>
+<dd><p>Save properties to a text file.</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>file<span class="classifier">str, optional</span></dt><dd><p>Filepath to save the data. Default is pycatch.dir.</p>
+</dd>
+<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Flag to overwrite the file if it already exists. Default is False.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id24">
+<h3>Returns<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.rebin">
+<span class="sig-name descname"><span class="pre">rebin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1024,</span> <span class="pre">1024)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.rebin" title="Permalink to this definition"></a></dt>
+<dd><p>Rebin maps to a new resolution (if a magnetogram is loaded, it will also be resampled).</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>ndim<span class="classifier">tuple, optional</span></dt><dd><p>New dimensions of the map. Default is (1024, 1024)).</p>
+</dd>
+<dt>** kwargs<span class="classifier"></span></dt><dd><p>Additional keyword arguments passed to sunpy.map.Map.resample (see sunpy documentation for more information).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save a pyCATCH object to a pickle file.</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>file<span class="classifier">str, optional</span></dt><dd><p>Filepath to save the object, default is pycatch.dir. Default is None.</p>
+</dd>
+<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Flag to overwrite the file if it already exists. Default is False.</p>
+</dd>
+<dt>no_original<span class="classifier">bool, optional</span></dt><dd><p>Flag to exclude saving the original map to save disk space. Default is True.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.select">
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.select" title="Permalink to this definition"></a></dt>
+<dd><p>Select a seed point from the intensity map.</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>hint<span class="classifier">bool, optional</span></dt><dd><p>If True, highlights possible coronal holes. Default is False.</p>
+</dd>
+<dt>fsize<span class="classifier">tuple, optional</span></dt><dd><p>Set the figure size (in inch). Default is (10, 10).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id30">
+<h3>Returns<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.set_threshold">
+<span class="sig-name descname"><span class="pre">set_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">median</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_percentage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.set_threshold" title="Permalink to this definition"></a></dt>
+<dd><p>Set the coronal hole extraction threshold.</p>
+<section id="id31">
+<h3>Parameters<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>threshold<span class="classifier">float</span></dt><dd><p>The threshold value.</p>
+</dd>
+<dt>median<span class="classifier">bool, optional</span></dt><dd><p>If True, the input is assumed to be a fraction of the median solar disk intensity. Default is True.</p>
+</dd>
+<dt>no_percentage<span class="classifier">bool, optional</span></dt><dd><p>If True, the input is given as a percentage of the median solar disk intensity. Default is False.
+This only works in conjunction with median=True.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id32">
+<h3>Returns<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.suggest_threshold">
+<span class="sig-name descname"><span class="pre">suggest_threshold</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.suggest_threshold" title="Permalink to this definition"></a></dt>
+<dd><p>Suggest a coronal hole extraction threshold based on the CATCH statistics (Heinemann et al. 2019).</p>
+<p>This function calculates a threshold value using the formula:
+TH = 0.29 * Im + 11.53 [DN]</p>
+<p>where Im is the median solar disk intensity in Data Numbers (DN).</p>
+<section id="id33">
+<h3>Parameters<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.threshold_from_curves">
+<span class="sig-name descname"><span class="pre">threshold_from_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.threshold_from_curves" title="Permalink to this definition"></a></dt>
+<dd><p>Select a threshold for coronal hole extraction from calculated area and uncertainty curves as a function of intensity.</p>
+<p>Before using this function, you need to calculate the curves using <cite>pycatch.calculate_curves()</cite>.</p>
+<section id="id35">
+<h3>Parameters<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>fsize<span class="classifier">tuple, optional</span></dt><dd><p>Set the figure size (in inch). Default is (10, 5).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id36">
+<h3>Returns<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycatch.pycatch.pycatch.threshold_from_hist">
+<span class="sig-name descname"><span class="pre">threshold_from_hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycatch.pycatch.pycatch.threshold_from_hist" title="Permalink to this definition"></a></dt>
+<dd><p>Select a threshold for coronal hole extraction from the solar disk intensity histogram.</p>
+<section id="id37">
+<h3>Parameters<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>fsize<span class="classifier">tuple, optional</span></dt><dd><p>Set the figure size (in inch). Default is (10, 5).</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id38">
+<h3>Returns<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="pyCATCH" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils/index.html" class="btn btn-neutral float-right" title="pycatch.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Stephan G. Heinemann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

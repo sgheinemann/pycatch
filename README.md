@@ -12,8 +12,10 @@ The user can perform coronal hole boundary detection, extraction and analysis us
 
 If you have any comments, suggestions or need help. Please contact the author via E-mail (stephan.heinemann@hmail.at) or leave a request on Github (https://github.com/sgheinemann/CATCH or https://github.com/sgheinemann/pycatch respectively).
 
-You can read the documentation by opening the
-	doc/_build/index.html
+The documentation can be found in the 
+	User_Manual.pdf
+or by opening the
+	doc/_build/html/index.html
 file.
 
 

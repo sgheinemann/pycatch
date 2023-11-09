@@ -1,0 +1,58 @@
+\indexentry{pycatch (class in pycatch.pycatch)@\spxentry{pycatch}\spxextra{class in pycatch.pycatch}|hyperpage}{7}
+\indexentry{bin2fits() (pycatch.pycatch.pycatch method)@\spxentry{bin2fits()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{9}
+\indexentry{calculate\_curves() (pycatch.pycatch.pycatch method)@\spxentry{calculate\_curves()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{9}
+\indexentry{calculate\_properties() (pycatch.pycatch.pycatch method)@\spxentry{calculate\_properties()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{9}
+\indexentry{calibration() (pycatch.pycatch.pycatch method)@\spxentry{calibration()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{10}
+\indexentry{calibration\_mag() (pycatch.pycatch.pycatch method)@\spxentry{calibration\_mag()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{11}
+\indexentry{cutout() (pycatch.pycatch.pycatch method)@\spxentry{cutout()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{11}
+\indexentry{download() (pycatch.pycatch.pycatch method)@\spxentry{download()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{11}
+\indexentry{download\_magnetogram() (pycatch.pycatch.pycatch method)@\spxentry{download\_magnetogram()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{12}
+\indexentry{extract\_ch() (pycatch.pycatch.pycatch method)@\spxentry{extract\_ch()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{13}
+\indexentry{load() (pycatch.pycatch.pycatch method)@\spxentry{load()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{13}
+\indexentry{plot\_map() (pycatch.pycatch.pycatch method)@\spxentry{plot\_map()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{13}
+\indexentry{print\_properties() (pycatch.pycatch.pycatch method)@\spxentry{print\_properties()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{14}
+\indexentry{rebin() (pycatch.pycatch.pycatch method)@\spxentry{rebin()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{14}
+\indexentry{save() (pycatch.pycatch.pycatch method)@\spxentry{save()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{15}
+\indexentry{select() (pycatch.pycatch.pycatch method)@\spxentry{select()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{15}
+\indexentry{set\_threshold() (pycatch.pycatch.pycatch method)@\spxentry{set\_threshold()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{15}
+\indexentry{suggest\_threshold() (pycatch.pycatch.pycatch method)@\spxentry{suggest\_threshold()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{16}
+\indexentry{threshold\_from\_curves() (pycatch.pycatch.pycatch method)@\spxentry{threshold\_from\_curves()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{16}
+\indexentry{threshold\_from\_hist() (pycatch.pycatch.pycatch method)@\spxentry{threshold\_from\_hist()}\spxextra{pycatch.pycatch.pycatch method}|hyperpage}{16}
+\indexentry{module@\spxentry{module}!pycatch.utils.calibration@\spxentry{pycatch.utils.calibration}|hyperpage}{17}
+\indexentry{pycatch.utils.calibration@\spxentry{pycatch.utils.calibration}!module@\spxentry{module}|hyperpage}{17}
+\indexentry{annulus\_limb\_correction() (in module pycatch.utils.calibration)@\spxentry{annulus\_limb\_correction()}\spxextra{in module pycatch.utils.calibration}|hyperpage}{17}
+\indexentry{calibrate\_aia() (in module pycatch.utils.calibration)@\spxentry{calibrate\_aia()}\spxextra{in module pycatch.utils.calibration}|hyperpage}{17}
+\indexentry{calibrate\_hmi() (in module pycatch.utils.calibration)@\spxentry{calibrate\_hmi()}\spxextra{in module pycatch.utils.calibration}|hyperpage}{18}
+\indexentry{calibrate\_stereo() (in module pycatch.utils.calibration)@\spxentry{calibrate\_stereo()}\spxextra{in module pycatch.utils.calibration}|hyperpage}{19}
+\indexentry{module@\spxentry{module}!pycatch.utils.ch\_mapping@\spxentry{pycatch.utils.ch\_mapping}|hyperpage}{19}
+\indexentry{pycatch.utils.ch\_mapping@\spxentry{pycatch.utils.ch\_mapping}!module@\spxentry{module}|hyperpage}{19}
+\indexentry{calc\_area\_curves() (in module pycatch.utils.ch\_mapping)@\spxentry{calc\_area\_curves()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{19}
+\indexentry{catch\_calc() (in module pycatch.utils.ch\_mapping)@\spxentry{catch\_calc()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{20}
+\indexentry{catch\_mag() (in module pycatch.utils.ch\_mapping)@\spxentry{catch\_mag()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{21}
+\indexentry{catch\_uncertainty() (in module pycatch.utils.ch\_mapping)@\spxentry{catch\_uncertainty()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{21}
+\indexentry{ch\_area() (in module pycatch.utils.ch\_mapping)@\spxentry{ch\_area()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{22}
+\indexentry{ch\_flux() (in module pycatch.utils.ch\_mapping)@\spxentry{ch\_flux()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{22}
+\indexentry{curve\_corr() (in module pycatch.utils.ch\_mapping)@\spxentry{curve\_corr()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{23}
+\indexentry{cutout() (in module pycatch.utils.ch\_mapping)@\spxentry{cutout()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{23}
+\indexentry{extract\_ch() (in module pycatch.utils.ch\_mapping)@\spxentry{extract\_ch()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{24}
+\indexentry{from\_5binmap() (in module pycatch.utils.ch\_mapping)@\spxentry{from\_5binmap()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{24}
+\indexentry{get\_curves() (in module pycatch.utils.ch\_mapping)@\spxentry{get\_curves()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{24}
+\indexentry{get\_intensity() (in module pycatch.utils.ch\_mapping)@\spxentry{get\_intensity()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{25}
+\indexentry{make\_circle() (in module pycatch.utils.ch\_mapping)@\spxentry{make\_circle()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{25}
+\indexentry{min\_picker() (in module pycatch.utils.ch\_mapping)@\spxentry{min\_picker()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{26}
+\indexentry{to\_5binmap() (in module pycatch.utils.ch\_mapping)@\spxentry{to\_5binmap()}\spxextra{in module pycatch.utils.ch\_mapping}|hyperpage}{26}
+\indexentry{module@\spxentry{module}!pycatch.utils.extensions@\spxentry{pycatch.utils.extensions}|hyperpage}{27}
+\indexentry{pycatch.utils.extensions@\spxentry{pycatch.utils.extensions}!module@\spxentry{module}|hyperpage}{27}
+\indexentry{congrid() (in module pycatch.utils.extensions)@\spxentry{congrid()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{27}
+\indexentry{find\_nearest() (in module pycatch.utils.extensions)@\spxentry{find\_nearest()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{27}
+\indexentry{get\_extent() (in module pycatch.utils.extensions)@\spxentry{get\_extent()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{28}
+\indexentry{init\_props() (in module pycatch.utils.extensions)@\spxentry{init\_props()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{28}
+\indexentry{median\_disk() (in module pycatch.utils.extensions)@\spxentry{median\_disk()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{28}
+\indexentry{printtxt() (in module pycatch.utils.extensions)@\spxentry{printtxt()}\spxextra{in module pycatch.utils.extensions}|hyperpage}{29}
+\indexentry{module@\spxentry{module}!pycatch.utils.plot@\spxentry{pycatch.utils.plot}|hyperpage}{29}
+\indexentry{pycatch.utils.plot@\spxentry{pycatch.utils.plot}!module@\spxentry{module}|hyperpage}{29}
+\indexentry{SnappingCursor (class in pycatch.utils.plot)@\spxentry{SnappingCursor}\spxextra{class in pycatch.utils.plot}|hyperpage}{29}
+\indexentry{get\_point\_from\_map() (in module pycatch.utils.plot)@\spxentry{get\_point\_from\_map()}\spxextra{in module pycatch.utils.plot}|hyperpage}{30}
+\indexentry{get\_thr\_from\_curves() (in module pycatch.utils.plot)@\spxentry{get\_thr\_from\_curves()}\spxextra{in module pycatch.utils.plot}|hyperpage}{30}
+\indexentry{get\_thr\_from\_hist() (in module pycatch.utils.plot)@\spxentry{get\_thr\_from\_hist()}\spxextra{in module pycatch.utils.plot}|hyperpage}{31}
+\indexentry{plot\_map() (in module pycatch.utils.plot)@\spxentry{plot\_map()}\spxextra{in module pycatch.utils.plot}|hyperpage}{31}

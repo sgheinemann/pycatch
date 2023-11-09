@@ -228,7 +228,7 @@ def get_point_from_map(map, hint, fsize):
         thrmap.plot(axes=ax, alpha =0.5, vmin=0.9, vmax=1.1 )
 
     
-    plt.show()
+    
     point=plt.ginput(n=1, timeout=120, show_clicks=True, mouse_add=MouseButton.LEFT, mouse_pop=MouseButton.RIGHT, mouse_stop=MouseButton.MIDDLE )
     plt.close()
     return point

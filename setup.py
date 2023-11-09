@@ -11,7 +11,7 @@ import pathlib
 
 
 version = {}
-with open("_version.py") as version_file:
+with open("pycatch/_version.py") as version_file:
     exec(version_file.read(), version)
 
 DESCRIPTION = 'Collection of Analysis Tools for Coronal Holes'
@@ -32,7 +32,7 @@ setup(
         url="https://github.com/sgheinemann/pycatch",
         packages=find_packages(),
         python_requires=">=3.11, <4",
-        install_requires=['numpy','sunpy','astropy','opencv-python','matplotlib', 'reproject','scipy','numexpr','joblib' ], # add any additional packages that 
+        install_requires=['numpy','sunpy','astropy','opencv-python','matplotlib', 'reproject','scipy','numexpr','joblib','aiapy' ], # add any additional packages that 
         # needs to be installed along with your package. Eg: 'caer'
         
         keywords=['python'],
