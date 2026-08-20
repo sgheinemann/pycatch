@@ -6,7 +6,7 @@ Welcome to **SBCross**: The Python Framework for Sector Boundary Analysis
 SBCross is a python-based processing engine and analysis pipeline built to extract, characterize, and analyze Sector Boundary (SB) crossings in the solar wind. 
 
 This repository contains the backend code and algorithmic framework used to generate, process, and maintain the **SBCross Database**, which is hosted and publicly accessible at:
-👉 **[Insert Database Link Here]** (e.g., `https://your-database-link.org`)
+👉 **[N/A]** 
 
 Using in-situ plasma, magnetic field, and suprathermal electron observations (such as OMNI and Wind data), SBCross provides a standardized toolkit to process magnetic field polarities, analyze electron pitch angle distributions (PAD), evaluate crossing durations, and calculate physical parameters such as Parker spiral-adjusted sector boundary thickness.
 
