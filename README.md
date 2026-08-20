@@ -1,25 +1,27 @@
-pyCATCH
-========
+SBCross
+=======
 
-Welcome to pyCATCH: the python implementation of the Collection of Analysis Tools for Coronal Holes (CATCH; Heinemann et al. 2019)
+Welcome to **SBCross**: The Python Framework for Sector Boundary Analysis
 
-CATCH was originally implemented in SSW IDL (See http://lmsal.com/solarsoft/ssw_install.html and http://www.lmsal.com/solarsoft/ssw_packages_info.html).
-It is also available on GitHub (https://github.com/sgheinemann/CATCH)
+SBCross is a python-based processing engine and analysis pipeline built to extract, characterize, and analyze Sector Boundary (SB) crossings in the solar wind. 
 
-CATCH and pyCATCH were created in order to collect and structure coronal hole identification, extraction and analysis in a handy and fast way without the disadvantages of automatic algorithms. It enables the user to download and process EUV filtergrams (193/195 A) and line-of-sight (Los) magnetograms. It is able to handle data from different spacecraft missions covering the interval from 1996 until now. These include the Solar Dynamics Observatory, the Solar Terrestrial Relations Observatory and the Solar and Heliospheric Observatory. 
+This repository contains the backend code and algorithmic framework used to generate, process, and maintain the **SBCross Database**, which is hosted and publicly accessible at:
+👉 **[Insert Database Link Here]** (e.g., `https://your-database-link.org`)
 
-The user can perform coronal hole boundary detection, extraction and analysis using a manually adjustable intensity threshold. Additionally the user can analyze the underlying photospheric magnetic field.
+Using in-situ plasma, magnetic field, and suprathermal electron observations (such as OMNI and Wind data), SBCross provides a standardized toolkit to process magnetic field polarities, analyze electron pitch angle distributions (PAD), evaluate crossing durations, and calculate physical parameters such as Parker spiral-adjusted sector boundary thickness.
 
-If you have any comments, suggestions or need help. Please contact the author via E-mail (stephan.heinemann@hmail.at) or leave a request on Github (https://github.com/sgheinemann/CATCH or https://github.com/sgheinemann/pycatch respectively).
-
-The documentation can be found in the 
-	User_Manual.pdf
-or by opening the
-	doc/_build/html/index.html
-file.
+The framework supports multi-mission observational data covering historical to modern solar cycles (1995–present), offering both high-resolution parameter extraction and interactive, reproducible event analysis.
 
 
-References
-----------
-Heinemann, S.G., Temmer, M., Heinemann, N., Dissauer, K., Samara, E., Jerčić, V., Hofmeister, S.J., Veronig, A.M.: 2019, Statistical analysis and catalog of non-polar coronal holes covering the SDO-era using CATCH. Solar Phys. 294, 144.
+Features
+--------
+* **Sector Boundary Identification:** Standardized pipeline to detect true sector boundary polarity reversals, crossing health, and Svalgaard in-situ polarity markers.
+* **Plasma & Field Dynamics:** Automated extraction and statistical profiling (means, standard deviations, peaks) of solar wind bulk speed ($V$), proton density ($N$), magnetic field magnitude ($B$), and plasma beta ($\beta$).
+* **Parker Geometry Integration:** Dynamical calculation of local Parker spiral angles and Sector Boundary physical thickness ($L = V_{\mathrm{normal}} \cdot \Delta t$).
+* **Visualization Engine:** Automated generation of high-quality 5-panel event diagnostic plots including magnetic components, electron asymmetry indices, and pitch angle spectrograms.
+
+
+Setup
+--------------------
+Download the Jupyter Notebook, install dependencies and run.
 
