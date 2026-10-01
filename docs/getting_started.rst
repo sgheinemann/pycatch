@@ -20,7 +20,7 @@ file.
 Installing pyCATCH
 -------------------
 
-For pyCATCH version < 1.0.0:	Download or pull pyCATCH repository from GitHub
+Current pyCATCH version:	Download or pull pyCATCH repository from GitHub
 ::
 
 	https://github.com/sgheinemann/pycatch
@@ -32,17 +32,20 @@ Navigate to the directory and install pyCATCH using pip
 
 pyCATCH uses the following packages:
 
-	* aiapy
-	* astropy
-	* joblib
-	* matplotlib
-	* numexpr
-	* numpy
-	* opencv-python
-	* sunpy
-	* reproject
-	* scipy
-
+    * python >= 3.14
+    * numpy ~= 2.5.3
+    * astropy ~= 8.0.1
+    * sunpy ~= 8.0.0
+    * aiapy ~= 0.12.0
+    * opencv-python ~= 5.0.0
+    * matplotlib ~= 3.11.1
+    * reproject ~= 0.21.0
+    * scipy ~= 1.18.1
+    * numexpr ~= 2.14.2
+    * joblib ~= 1.6.0
+    * jupyterlab ~= 4.6.4
+    * ipympl ~= 0.10.0
+    
 
 Initializing pyCATCH
 --------------------
@@ -64,12 +67,12 @@ Dowloading data
 EUV data can be downloaded with
 ::
 	
-	ch.download('DATE') 
+	ch.download('DATE', email='example@pycatch.com') 
 
-and respectively magnetograms, if a EUV map is already loaded
+a JSOC registered email is require for the default download routine. Magnetograms can be automatically downloaded, if a EUV map is already loaded, with
 ::
 	
-	ch.download_magnetogram()
+	ch.download_magnetogram(email='example@pycatch.com')
 
 	
 Loading data
@@ -98,8 +101,18 @@ The data can rebinned and cutout if desired
 	
 	ch.rebin(ndim=(nx,ny))
 	ch.cutout(top=(x_max,y_max), bot=(x_min,y_min))
+	
 
+Quicklook at the data
+---------------------
 
+Data can be quickly visualized with
+::
+	
+	ch.show()
+	ch.show(mag=True)
+	
+	
 Selecting coronal hole seed point
 ---------------------------------
 
@@ -117,30 +130,27 @@ Setting a threshold
 pyCATCH features four different options to select a threshold.
 
 
-	* Set the threshold manually
-	  ::
-	    	
-		ch.set_threshold(Threshold)
-
-	* Use the threshold derived from CATCH statistics (Heinemann et al. 2019)
-	  ::
-		
-		ch.suggest_threshold()
-
-	  It is advised to use this option to get a starting suggestion and then adjust the threshold as needed.
+    * Set the threshold manually::
     
-	* Select the threshold from solar disk intensity distribution
-	  ::
-		
-		ch.threshold_from_hist()
+        ch.set_threshold(Threshold)
     
-	* Calculate the coronal hole area and uncertainty as function of intensity and select the boundary to be where the uncertainty is lowest.
-	  ::
-		
-		ch.calculate_curves() 
-		ch.threshold_from_curves()
-
-	  Warning: This is an advance option and can be slow with high resolution.
+    * Use the threshold derived from CATCH statistics (Heinemann et al. 2019)::
+    
+        ch.suggest_threshold()
+    
+      It is advised to use this option to get a starting suggestion and then adjust the threshold as needed.
+    
+    * Select the threshold from solar disk intensity distribution::
+    
+        ch.threshold_from_hist()
+    
+    * Calculate the coronal hole area and uncertainty as function of intensity and select the boundary to be where the uncertainty is lowest::
+    
+        ch.calculate_curves()
+        ch.threshold_from_curves()
+    
+      .. warning::
+         This is an advanced option and can be slow with high resolution.
 
 Extracting the coronal hole
 ---------------------------
@@ -189,10 +199,10 @@ The properties of the extracted coronal hole can be saved in a text file with
 	
 	ch.print_properties()
 
-And the extracted coronal hole 'binary' map can be saved as a fits file with 
+And the extracted coronal hole 'binary' map (or any other map) can be saved as a fits file with 
 ::
 	
-	ch.bin2fits()
+	ch.save_map()
 	
 	
 Saving and loading pyCATCH session

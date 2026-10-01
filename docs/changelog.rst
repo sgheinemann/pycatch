@@ -1,7 +1,24 @@
 =========
 Changelog
 =========
+1.0.0 (October 1, 2026)
+-------------------------
 
+* Major update for release
+
+    - Updated compatibility to current versions of Python, SunPy, aiapy, ...
+    - Included JSOC download capabilities (now standard)
+    - Added a new .show command for quicklook images of maps
+    - Added advanced AIA PSF convolution by S.J. Hofmeister (new code and new PSF that are automatically downloaded)
+    - Changed .bin2fits to .save_map to allow saving of different maps as FITS files (i.e. prepped input data)
+    - Fixed data prep with new Python packages
+    - Added progress bars to some steps
+    - Added compatibility with Jupyter Notebooks
+    - Added the capability to extract and analyze multiple coronal holes at the same time for a given image (now arbitrarily capped at 10)
+    
+* Bug fixing
+	- fixed various small bugs
+	
 0.2.1 (Novemeber 9, 2023)
 -------------------------
 

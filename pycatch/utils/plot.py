@@ -30,8 +30,8 @@ mpl.rcParams['xtick.minor.size']=    4       # minor tick size in points
 mpl.rcParams['xtick.major.width']=   2     # major tick width in points
 mpl.rcParams['xtick.minor.width']=   2     # minor tick width in points
 
+        
 # cursor class to click into plot (snaps to datapoint)
-
 class SnappingCursor:
     """
     A cross-hair cursor that snaps to the data point of a line, which is
@@ -194,9 +194,9 @@ class SnappingCursor:
                 
                 
                 
-                
+    
 # open window to click for coronal hole seed point
-def get_point_from_map(map, hint, fsize):
+def get_point_from_map(map, hint, fsize, is_notebook=False, max_points=10):
     """
     Display a solar map and allow the user to interactively select a point on the map.
     
@@ -206,36 +206,148 @@ def get_point_from_map(map, hint, fsize):
         The solar map to be displayed.
     fsize : tuple of int
         The size of the figure (width, height) in inches.
+    is_notebook : bool
+        Is pycatch being run in a jupyter notebook
+    max_points : int
+        Max number of coronal holes/points to be selected
     
     Returns
     -------
     point : list of float
         A list containing the coordinates (x, y) of the selected point on the solar map.
     """
+        
+    # Enable interactive mode
+    plt.ion()
+    
     fig = plt.figure(figsize=fsize)
     ax = fig.add_subplot(projection=map)
     map.plot(axes=ax)
     
+    
+    thr=ext.median_disk(map)*0.35
+    hpc_coords=all_coordinates_from_map(map)
+    mask=coordinate_is_on_solar_disk(hpc_coords)
     if hint:
-        thr=ext.median_disk(map)*0.35
-        
-        hpc_coords=all_coordinates_from_map(map)
-        mask=coordinate_is_on_solar_disk(hpc_coords)
         data=np.where(np.logical_and(mask == True,map.data <= thr),1, np.nan)
-        thrmap=sunpy.map.Map((data,map.meta))
-        
-        thrmap.plot_settings['cmap']=plt.get_cmap('Blues')
-        thrmap.plot(axes=ax, alpha =0.5, vmin=0.9, vmax=1.1 )
+    else:
+        data=np.full_like(map.data,np.nan)
+  
+    thrmap=sunpy.map.Map((data,map.meta))
+    thrmap.plot_settings['cmap']=plt.get_cmap('Blues')
+    thrmap.plot(axes=ax, alpha =0.5, vmin=0.9, vmax=1.1 )
 
+    fig.canvas.draw()
+
+    # --- Branch 1: CLI Scripts (Native ginput) ---
+    if not is_notebook:
+        plt.show(block=False)
+        points = plt.ginput(
+            n=max_points, 
+            timeout=120, 
+            show_clicks=True, 
+            mouse_add=MouseButton.LEFT, 
+            mouse_pop=MouseButton.RIGHT, 
+            mouse_stop=MouseButton.MIDDLE
+        )
+        plt.close(fig)
+        return points
+
+    # --- Branch 2:  Jupyter Notebooks (mpl_connect) ---
+    else:
+        fig.selected_points = []
+        fig.markers = []
     
+        ax.set_title(
+            f"Select up to {max_points} points | Click: Add | Right-click: Undo\n"
+            f"Enter / Double-Click: Finish",
+            pad=15,
+        )
     
-    point=plt.ginput(n=1, timeout=120, show_clicks=True, mouse_add=MouseButton.LEFT, mouse_pop=MouseButton.RIGHT, mouse_stop=MouseButton.MIDDLE )
-    plt.close()
-    return point
+        def finish():
+            fig.canvas.mpl_disconnect(cid_click)
+            fig.canvas.mpl_disconnect(cid_key)
+            ax.set_title(
+                f"Finished!\nCaptured {len(fig.selected_points)}/{max_points} point(s).",
+                pad=15,
+            )
+            fig.canvas.draw_idle()
+            if fig.canvas.start_event_loop:
+                fig.canvas.stop_event_loop()
+    
+        def onclick(event):
+            if event.inaxes != ax:
+                return
+    
+            # Finish manually via Double-Click or Middle-Click
+            if event.dblclick or event.button == MouseButton.MIDDLE:
+                finish()
+                return
+    
+            # Left Click -> Add Point
+            if event.button == MouseButton.LEFT:
+                if len(fig.selected_points) < max_points:
+                    # --- KEY FIX FOR COORDINATE EQUALITY ---
+                    # event.x, event.y are raw display pixels on the canvas.
+                    # Converting via ax.transData.inverted() gets the exact WCS/data pixel coordinates that ginput uses.
+                    x_pixel, y_pixel = ax.transData.inverted().transform(
+                        (event.x, event.y)
+                    )
+    
+                    # Append as exact standard float tuple matching ginput
+                    fig.selected_points.append((float(x_pixel), float(y_pixel)))
+    
+                    # Plot marker using the event's axis display data (xdata, ydata)
+                    (marker,) = ax.plot(
+                        event.xdata,
+                        event.ydata,
+                        "rx",
+                        markersize=10,
+                        markeredgewidth=2,
+                    )
+                    fig.markers.append(marker)
+    
+                    # Auto-finish if maximum points limit reached
+                    if len(fig.selected_points) == max_points:
+                        finish()
+                    else:
+                        ax.set_title(
+                            f"Selected {len(fig.selected_points)}/{max_points} point(s) | Right-click: Undo\n"
+                            f"Press Enter or Double-click to complete early",
+                            pad=15,
+                        )
+                        fig.canvas.draw_idle()
+    
+            # Right Click -> Undo Last Point
+            elif event.button == MouseButton.RIGHT:
+                if fig.selected_points and fig.markers:
+                    fig.selected_points.pop()
+                    marker = fig.markers.pop()
+                    marker.remove()
+                    ax.set_title(
+                        f"Selected {len(fig.selected_points)}/{max_points} point(s) | Right-click: Undo\n"
+                        f"Press Enter or Double-click to complete early",
+                        pad=15,
+                    )
+                    fig.canvas.draw_idle()
+    
+        def onkey(event):
+            if event.key in ["enter", " ", "q", "escape"]:
+                finish()
+    
+        cid_click = fig.canvas.mpl_connect("button_press_event", onclick)
+        cid_key = fig.canvas.mpl_connect("key_press_event", onkey)
+    
+        plt.show()
+    
+        # Block execution until the user finishes clicking
+        fig.canvas.start_event_loop(timeout=120)
+    
+        return fig.selected_points
 
 
 # open window to click in histogram for threshold / use snapping cursor
-def get_thr_from_hist(map, fsize):
+def get_thr_from_hist(map, fsize, is_notebook=False):
     """
     Interacticely get a threshold value from a histogram of solar disk data.
     
@@ -245,7 +357,9 @@ def get_thr_from_hist(map, fsize):
         The solar map for which the threshold will be determined.
     fsize : tuple of int
         The size of the figure (width, height) in inches.
-    
+    is_notebook : bool
+        Is pycatch being run in a jupyter notebook
+
     Returns
     -------
     thr : float
@@ -276,15 +390,107 @@ def get_thr_from_hist(map, fsize):
 
     p,=ax.plot(x,y,linewidth=2, label=r'N')
 
-    snap_cursor = SnappingCursor(fig,ax,p,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$N$'], xe=100*x/data_median)
-    fig.canvas.start_event_loop(timeout=-1)
-    plt.show()
-    
-    return snap_cursor.location
+    # --- Branch 1: CLI Scripts (Native SnappingCursor / ginput) ---
+    if not is_notebook:
+        # Assumes SnappingCursor is defined in your module scope
+        snap_cursor = SnappingCursor(fig, ax, p, names=[r'$I$ [DN/s]', r'$I_{med}$ [$\%]', r'$N$'], xe=100 * x / data_median)
+        fig.canvas.start_event_loop(timeout=-1)
+        plt.show()
+        return snap_cursor.location
+
+    # --- Branch 2: Jupyter Notebooks (Single Point Async Listener) ---
+    else:
+        fig.threshold_val = None
+        fig.v_line = None
+
+        ax.set_title(
+            "Click: Set/Replace threshold line | Right-click: Clear\n"
+            "Enter / Double-Click: Finish & Lock in selection",
+            pad=15
+        )
+
+        def finish():
+            fig.canvas.mpl_disconnect(cid_click)
+            fig.canvas.mpl_disconnect(cid_key)
+            if fig.threshold_val is not None:
+                ax.set_title(
+                    f"Threshold Locked In: {fig.threshold_val:.2f} DN/s\n"
+                    f"({100 * fig.threshold_val / data_median:.1f}% of disk median)",
+                    pad=15
+                )
+            else:
+                ax.set_title("Finished! No threshold selected.", pad=15)
+            
+            fig.canvas.draw_idle()
+            print(f"Locked-in Threshold: {fig.threshold_val}")
+
+            # Stop the blocking event loop so the function can return the value
+            if hasattr(fig.canvas, 'stop_event_loop'):
+                fig.canvas.stop_event_loop()
+
+        def onclick(event):
+            if event.inaxes != ax:
+                return
+
+            # Double-click or Middle-click locks in and finishes
+            if event.dblclick or event.button == MouseButton.MIDDLE:
+                finish()
+                return
+
+            # Left-click: Set or replace the existing threshold line
+            if event.button == MouseButton.LEFT:
+                fig.threshold_val = float(event.xdata)
+                
+                # Remove previous vertical line if user is replacing a point
+                if fig.v_line is not None:
+                    fig.v_line.remove()
+
+                # Draw new vertical indicator line
+                fig.v_line = ax.axvline(
+                    x=fig.threshold_val, 
+                    color='r', 
+                    linestyle='--', 
+                    linewidth=2
+                )
+                
+                pct_median = (fig.threshold_val / data_median) * 100
+                ax.set_title(
+                    f"Selected Threshold: {fig.threshold_val:.2f} DN/s ({pct_median:.1f}% median)\n"
+                    f"Click again to replace | Enter / Double-Click to lock in",
+                    pad=15
+                )
+                fig.canvas.draw_idle()
+
+            # Right-click: Clear active point
+            elif event.button == MouseButton.RIGHT:
+                if fig.v_line is not None:
+                    fig.v_line.remove()
+                    fig.v_line = None
+                    fig.threshold_val = None
+                    ax.set_title(
+                        "Threshold cleared.\n"
+                        "Click to select threshold | Enter / Double-Click: Finish",
+                        pad=15
+                    )
+                    fig.canvas.draw_idle()
+
+        def onkey(event):
+            if event.key in ['enter', ' ', 'q', 'escape']:
+                finish()
+
+        cid_click = fig.canvas.mpl_connect('button_press_event', onclick)
+        cid_key = fig.canvas.mpl_connect('key_press_event', onkey)
+
+        plt.show()
+
+        # Block code execution until finish() calls stop_event_loop()
+        fig.canvas.start_event_loop(timeout=-1)
+
+        return fig.threshold_val
     
 
 # open window to click in area curves for threshold / use snapping cursor
-def get_thr_from_curves(map, curves ,fsize):
+def get_thr_from_curves(map, curves ,fsize, is_notebook=False):
     """
     Interactively get a threshold value from a plot of coronal hole area curves.
 
@@ -336,16 +542,108 @@ def get_thr_from_curves(map, curves ,fsize):
     p1,=ax.plot(x,y1,linewidth=2,color='blue')
     p2,=ax2.plot(x,y2,linewidth=2, color='red')
 
-    snap_cursor = SnappingCursor(fig,ax,p1,line2=p2,names=[r'$I$ [DN/s]',r'$I_{med}$ [$\%$]',r'$A$ [$10^{10}$km$^2$]',r'$\epsilon$'], xe=100*x/data_median)
-    fig.canvas.start_event_loop(timeout=-1)
-    plt.show()
-    
-    return snap_cursor.location    
+    # --- Branch 1: CLI Scripts (Native SnappingCursor) ---
+    if not is_notebook:
+        snap_cursor = SnappingCursor(fig, ax, p1, line2=p2, names=[r'$I$[DN/s]', r'$I_{med}$[$\%]', r'$A$ [$10^{10}$km$^2$]', r'$\epsilon$'], xe=100 * x / data_median)
+        fig.canvas.start_event_loop(timeout=-1)
+        plt.show()
+        return snap_cursor.location    
+
+    # --- Branch 2: Jupyter Notebooks (Interactive Curve Selection & Lock-In) ---
+    else:
+        fig.threshold_val = None
+        fig.v_line = None
+
+        ax.set_title(
+            "Click: Set/Replace threshold line | Right-click: Clear\n"
+            "Enter / Double-Click: Finish & Lock in selection",
+            pad=15
+        )
+
+        def finish():
+            fig.canvas.mpl_disconnect(cid_click)
+            fig.canvas.mpl_disconnect(cid_key)
+            if fig.threshold_val is not None:
+                ax.set_title(
+                    f"Threshold Locked In: {fig.threshold_val:.2f} DN/s\n"
+                    f"({100 * fig.threshold_val / data_median:.1f}% of disk median)",
+                    pad=15
+                )
+            else:
+                ax.set_title("Finished! No threshold selected.", pad=15)
+            
+            fig.canvas.draw_idle()
+            print(f"Locked-in Threshold: {fig.threshold_val}")
+
+            # Stop blocking event loop to allow function return
+            if hasattr(fig.canvas, 'stop_event_loop'):
+                fig.canvas.stop_event_loop()
+
+        def onclick(event):
+            # Allow clicks inside primary ax or twin ax2
+            if event.inaxes not in [ax, ax2]:
+                return
+
+            # Double-click or Middle-click locks in and finishes
+            if event.dblclick or event.button == MouseButton.MIDDLE:
+                finish()
+                return
+
+            # Left-click: Set or replace threshold line
+            if event.button == MouseButton.LEFT:
+                fig.threshold_val = float(event.xdata)
+                
+                # Remove previous vertical line indicator
+                if fig.v_line is not None:
+                    fig.v_line.remove()
+
+                # Draw vertical indicator line across full plot height
+                fig.v_line = ax.axvline(
+                    x=fig.threshold_val, 
+                    color='black', 
+                    linestyle='--', 
+                    linewidth=2
+                )
+                
+                pct_median = (fig.threshold_val / data_median) * 100
+                ax.set_title(
+                    f"Selected Threshold: {fig.threshold_val:.2f} DN/s ({pct_median:.1f}% median)\n"
+                    f"Click again to replace | Enter / Double-Click to lock in",
+                    pad=15
+                )
+                fig.canvas.draw_idle()
+
+            # Right-click: Clear active threshold line
+            elif event.button == MouseButton.RIGHT:
+                if fig.v_line is not None:
+                    fig.v_line.remove()
+                    fig.v_line = None
+                    fig.threshold_val = None
+                    ax.set_title(
+                        "Threshold cleared.\n"
+                        "Click to select threshold | Enter / Double-Click: Finish",
+                        pad=15
+                    )
+                    fig.canvas.draw_idle()
+
+        def onkey(event):
+            if event.key in ['enter', ' ', 'q', 'escape']:
+                finish()
+
+        cid_click = fig.canvas.mpl_connect('button_press_event', onclick)
+        cid_key = fig.canvas.mpl_connect('key_press_event', onkey)
+
+        plt.show()
+
+        # Block notebook execution until finish() calls stop_event_loop()
+        fig.canvas.start_event_loop(timeout=-1)
+
+        return fig.threshold_val
     
 
 # open window to display coronal hole
 def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,grid,**kwargs):
-    """
+    r"""
     Plot a solar map with optional boundaries and uncertainty overlays.
     
     Parameters
@@ -364,7 +662,7 @@ def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,grid,**kwargs):
         Whether to save the figure to a file.
     spath : str
         The path to save the figure if `save` is True.
-    **kwargs
+    \*\*kwargs
         Additional keyword arguments to pass to the `sunpy.map.Map.plot` function.
     
     Returns
@@ -380,18 +678,15 @@ def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,grid,**kwargs):
         
     if bmap is not None:
         bmap.meta['bunit']=''
+        
         if uncertainty:
             hdata=np.where(np.logical_and(bmap.data < 5, bmap.data >0), 1,np.nan)
             umap=sunpy.map.Map((hdata,bmap.meta))
-            
             umap.plot_settings['cmap']=plt.get_cmap('winter_r')
             umap.plot(axes=ax, alpha =0.7, vmin=0.9, vmax=1., autoalign=True)
     
         if boundary:
-            contours = bmap.contour(2.5*u.dimensionless_unscaled)
-            
-            for contour in contours:
-                ax.plot_coord(contour,lw=1.5 ,color='red')
+            bmap.draw_contours(levels=[2.5] * u.dimensionless_unscaled, axes=ax, colors='red', linewidths=1.5)
 
     if grid:
         ax.grid(True)
@@ -411,7 +706,39 @@ def plot_map(map,bmap,boundary,uncertainty, fsize, save ,spath,grid,**kwargs):
 
 
 
+# quicklook image for maps
+def show_map(map, grid=False, fsize=(8, 8), **kwargs):
+    r"""
+    Plot a quicklook visualization of a solar map with optional magnetogram 
+    contours and grid overlays.
 
+    Parameters
+    ----------
+    map : sunpy.map.GenericMap
+        The primary solar map to be plotted.
+    grid : bool, optional
+        Whether to draw heliographic grid lines on the plot. Default is False.
+    fsize : tuple of int or float, optional
+        The size of the figure (width, height) in inches. Default is (8, 8).
+    \*\*kwargs
+        Additional keyword arguments passed directly to `map.plot()`.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The WCS axes object containing the solar map plot.
+    """
+    fig = plt.figure(figsize=fsize)
+    ax = fig.add_subplot(projection=map)
+    
+    # Plot primary solar map
+    map.plot(axes=ax, **kwargs)
+
+    # Grid overlay
+    if grid:
+        map.draw_grid(axes=ax)
+
+    return ax
 
 
 

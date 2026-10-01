@@ -123,11 +123,15 @@ def get_extent(map):
         (x_min, y_min) represents the HPC coordinates of the lower-left corner.
         (x_max, y_max) represents the HPC coordinates of the upper-right corner.
     """
-    hpc_coords=all_coordinates_from_map(map)
-    mask=map.data > 0
-    tx=mask*hpc_coords.Tx.value
-    ty=mask*hpc_coords.Ty.value
-    return (np.nanmin(tx),np.nanmin(ty)), (np.nanmax(tx),np.nanmax(ty))
+    hpc_coords = all_coordinates_from_map(map)
+    mask = map.data > 0
+    
+    # Set background locations to NaN so they don't corrupt min/max calculations
+    tx = np.where(mask, hpc_coords.Tx.value, np.nan)
+    ty = np.where(mask, hpc_coords.Ty.value, np.nan)
+    
+    return (np.nanmin(tx), np.nanmin(ty)), (np.nanmax(tx), np.nanmax(ty))
+
     
 #--------------------------------------------------------------------------------------------------
 # find nearest index

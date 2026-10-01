@@ -18,7 +18,8 @@ ch = pycatch()
 #------------------------------------------------------------------------------
 # download EUV data 
 # default is AIA/SDO 193 data
-ch.download('2013-05-29T18:00') # example date
+# default channel is JSOC; needs  JSOC registered email
+ch.download('2013-05-29T18:00', email='example@pycatch.com')
 
 #------------------------------------------------------------------------------
 # load EUV data 
@@ -27,14 +28,18 @@ ch.load()
 
 #------------------------------------------------------------------------------
 # download magnetogram 
-# default is HMI/SDO 45s data
-# EUV map must be loaded for the magnetogram download, it downloads the magnetogram date closest to the EUV map date
-ch.download_magnetogram()
+# default is HMI/SDO 720s data
+# EUV map must be loaded for the magnetogram download to work, it downloads the magnetogram date closest to the EUV map date
+ch.download_magnetogram(email='example@pycatch.com')
 
 #------------------------------------------------------------------------------
 # load magnetogram 
 # filepath of the downloaded file is stored in ch.magnetogram_file, it can also be given manually
 ch.load(mag=True)
+
+#------------------------------------------------------------------------------
+# quicklook at loaded images (use mag=True for magnetogram)
+ch.show()
 
 #------------------------------------------------------------------------------
 # calibrate data
@@ -123,6 +128,6 @@ ch.plot_map(save=True)
 ch.plot_map(mag=True,save=True)
 
 # save binary coronal hole map to fits file
-ch.bin2fits()
+ch.save_map()
 
 #------------------------------------------------------------------------------

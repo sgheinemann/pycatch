@@ -6,10 +6,9 @@ import scipy.ndimage as ndi
 import copy
 from joblib import Parallel, delayed
 import numexpr as ne
-import time
+from tqdm import tqdm
 
 from astropy.coordinates import SkyCoord
-import astropy.units as u
 from matplotlib import colormaps as cms
 
 import sunpy
@@ -155,7 +154,7 @@ def get_curves(map,seed,kernel=None, upper_lim=False, cores = 8):
     
     minval=min_picker(seed, map.data) 
     coreg=curve_corr(map)
-    output=Parallel(n_jobs=cores)(delayed(calc_area_curves)(map, th,kernel, seed,minval,coreg) for th in rng)
+    output=Parallel(n_jobs=cores)(delayed(calc_area_curves)(map, th,kernel, seed,minval,coreg) for th in tqdm(rng, desc="Calculating curves"))
     
     uncertainty=[]
     for xpos in range(len(rng)-4):
@@ -337,6 +336,34 @@ def from_5binmap(binmap):
         nbinmap.data[:]=bmapdata
         binmaps.append(copy.deepcopy(nbinmap))
     return binmaps
+
+#--------------------------------------------------------------------------------------------------
+
+# combine same size binmaps of different coronal holes to one binmap for saving and plotting
+def combine_binmaps(binmap):
+    """
+    Add multiple binary maps to one binary map.
+
+    Parameters
+    ----------
+    binmaps : sunpy.map.Map
+        A list of 5-level binary maps containing multiple threshold levels.
+
+    Returns
+    -------
+    sunpy.map.Map
+        A single binary map.
+    """
+    
+    if not binmap:
+        print("> pycatch ## no extractrions available ##")
+        return None
+    
+    if len(binmap) == 1:
+        return binmap[0]
+    else:
+        combined_data = np.sum([bmap.data for bmap in binmap], axis=0)
+        return sunpy.map.Map(combined_data, binmap[0].meta)
 
 #--------------------------------------------------------------------------------------------------
 
@@ -597,4 +624,6 @@ def ch_flux(binmap, magmap, coreg=[0]):
     tmpflux_abs = data * np.abs(magmap.data) * fluxcoreg
     
     return np.nanmean(tmpflux/tmparea)/1e10,np.nanmean(tmpflux_abs/tmparea)/1e10,np.nansum(tmpflux)/1e20,np.nansum(tmpflux_abs)/1e20 
+
+
 

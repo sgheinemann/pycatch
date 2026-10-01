@@ -19,4 +19,13 @@ file.
 
 References
 ----------
+Main CATCH paper:
 Heinemann, S.G., Temmer, M., Heinemann, N., Dissauer, K., Samara, E., Jerčić, V., Hofmeister, S.J., Veronig, A.M.: 2019, Statistical analysis and catalog of non-polar coronal holes covering the SDO-era using CATCH. Solar Phys. 294, 144.
+
+
+For the SJH PSF please reference:
+Hofmeister, S.J., Savin, D.W., Hahn, M.: 2025, Revised Point-spread Functions for the Atmospheric Imaging Assembly on board the Solar Dynamics Observatory. Astrophys. J. Suppl. Ser. 278, 8.
+
+
+For the Annulus Limb Correction please reference:
+Verbeeck, C., Delouille, V., Mampaey, B., De Visscher, R.: 2014, The SPoCA-suite: Software for extraction, characterization, and tracking of active regions and coronal holes on EUV images. Astron. Astrophys. 561, A29.

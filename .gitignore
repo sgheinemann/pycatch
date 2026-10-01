@@ -1,14 +1,18 @@
-# Byte-compiled / optimized Python files
-./pycatch/utils/__pycache__
-./pycatch/__pycache__
-./__pycache__
-__pycache__
+# macOS system files
+.DS_Store
 
-# Distribution and build directories
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+
+# Distribution & package build directories
 dist/
 build/
 *.egg-info/
 
-# Caches and logs
-.cache/
-logs/
+# Sphinx documentation build directory (DO NOT commit output builds)
+docs/_build/
+
+# Environments
+.venv/
+venv/
